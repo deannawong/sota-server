@@ -4,6 +4,7 @@
   "description": "Server for SOTA app.",
   "main": "index.js",
   "scripts": {
+    "start": "node ./server/index.js",
     "start-watch": "./node_modules/.bin/nodemon ./server/index.js"
   },
   "keywords": [],
