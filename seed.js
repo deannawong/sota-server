@@ -23,8 +23,8 @@ const seed = () => {
           "https://www.triposo.com/api/20190906/poi.json?location_id=New_York_City&count=100&fields=id,name,coordinates,tags",
           {
             headers: {
-              "X-Triposo-Account": process.env.TRIPOSO_ACCOUNT,
-              "X-Triposo-Token": process.env.TRIPOSO_TOKEN
+              "X-Triposo-Account": `${process.env.TRIPOSO_ACCOUNT}`,
+              "X-Triposo-Token": `${process.env.TRIPOSO_TOKEN}`
             }
           }
         )
