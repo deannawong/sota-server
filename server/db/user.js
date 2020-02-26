@@ -1,50 +1,50 @@
-const Sequelize = require('sequelize');
-const db = require('./database');
-var bcrypt = require('bcrypt');
+const Sequelize = require("sequelize");
+const db = require("./database");
+var bcrypt = require("bcrypt");
 
 const { STRING, UUID, UUIDV4 } = Sequelize;
 
 const User = db.define(
-  'user',
+  "user",
   {
     id: {
       type: UUID,
       defaultValue: UUIDV4,
-      primaryKey: true,
+      primaryKey: true
     },
     firstName: {
       type: STRING,
       allowNull: false,
       validate: {
-        notEmpty: true,
-      },
+        notEmpty: true
+      }
     },
     lastName: {
       type: STRING,
       allowNull: false,
       validate: {
-        notEmpty: true,
-      },
+        notEmpty: true
+      }
     },
-    City: {
+    city: {
       type: STRING,
-      allowNull: true,
+      allowNull: true
     },
     email: {
       type: STRING,
       allowNull: false,
       validate: {
         notEmpty: true,
-        isEmail: true,
-      },
+        isEmail: true
+      }
     },
     password: {
       type: STRING,
       allowNull: false,
       validate: {
-        notEmpty: true,
-      },
-    },
+        notEmpty: true
+      }
+    }
   },
   {
     hooks: {
@@ -54,8 +54,8 @@ const User = db.define(
         const salt = bcrypt.genSaltSync(saltRounds);
         const hash = bcrypt.hashSync(password, salt);
         user.password = hash;
-      },
-    },
+      }
+    }
   }
 );
 
