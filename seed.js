@@ -7,6 +7,7 @@ const {
   sync
 } = require("./server/db");
 const axios = require("axios");
+const chalk = require("chalk");
 
 const seed = () => {
   return sync(true).then(() => {
