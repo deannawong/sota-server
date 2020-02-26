@@ -11,7 +11,7 @@ const chalk = require("chalk");
 
 const seed = () => {
   return sync(true).then(() => {
-    User.create({
+    return User.create({
       firstName: "James",
       lastName: "Doe",
       city: "New York City",
