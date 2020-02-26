@@ -18,8 +18,8 @@ const seed = () => {
       email: "jamesdoe@gmail.com",
       password: "secret"
     })
-      .then(() =>
-        axios.get(
+      .then(() => {
+        return axios.get(
           "https://www.triposo.com/api/20190906/poi.json?location_id=New_York_City&count=100&fields=id,name,coordinates,tags",
           {
             headers: {
@@ -27,11 +27,11 @@ const seed = () => {
               "X-Triposo-Token": process.env.TRIPOSO_TOKEN
             }
           }
-        )
-      )
+        );
+      })
       .then(triposoResponse => {
-        const { result } = triposoResponse;
-        return result.map(activity => {
+        const { results } = triposoResponse;
+        return results.map(activity => {
           const { name, coordinates } = activity;
           return {
             name: name,
