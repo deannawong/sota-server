@@ -9,13 +9,16 @@ const Activity = db.define("activity", {
     defaultValue: UUIDV4,
     primaryKey: true
   },
+  name: {
+    type: STRING,
+    allowNull: false
+  },
   location: {
     type: GEOMETRY("POINT"),
     allowNull: false
   },
   type: {
-    type: STRING,
-    allowNull: false
+    type: STRING
   },
   averageRating: {
     type: ENUM("1", "2", "3", "4", "5")
