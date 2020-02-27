@@ -38,7 +38,7 @@ const startServer = () =>
     });
   });
 
-sync(true).then(result => {
+sync(false).then(result => {
   if (result) {
     return startServer();
   }

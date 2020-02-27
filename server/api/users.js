@@ -1,8 +1,15 @@
 const router = require("express").Router();
-const { User } = require("../db");
+const { User, Itinerary, ActivityInstance, Activity } = require("../db");
 
 router.get("/", (req, res, next) => {
-  User.findAll()
+  User.findAll({
+    include: [
+      {
+        model: Itinerary,
+        include: [{ model: ActivityInstance, include: [{ model: Activity }] }]
+      }
+    ]
+  })
     .then(allUsers => {
       if (allUsers.length) {
         res.status(200).send(allUsers);

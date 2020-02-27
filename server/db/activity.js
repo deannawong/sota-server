@@ -1,7 +1,7 @@
 const Sequelize = require("sequelize");
 const db = require("./database");
 
-const { STRING, UUID, UUIDV4, DECIMAL, GEOMETRY, TIME, ENUM } = Sequelize;
+const { STRING, UUID, UUIDV4, ENUM, FLOAT } = Sequelize;
 
 const Activity = db.define("activity", {
   id: {
@@ -13,8 +13,12 @@ const Activity = db.define("activity", {
     type: STRING,
     allowNull: false
   },
-  location: {
-    type: GEOMETRY("POINT"),
+  locationLong: {
+    type: FLOAT,
+    allowNull: false
+  },
+  locationLat: {
+    type: FLOAT,
     allowNull: false
   },
   type: {

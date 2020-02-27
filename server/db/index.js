@@ -7,8 +7,11 @@ const Itinerary = require("./itinerary");
 
 //For the geometry type to work, must run this command in CLI:
 // psql capstone_travel_app -c "CREATE EXTENSION postgis"
-Activity.belongsToMany(Itinerary, { through: ActivityInstance });
-Itinerary.hasMany(Activity);
+Activity.belongsTo(ActivityInstance);
+ActivityInstance.hasOne(Activity);
+
+ActivityInstance.belongsTo(Itinerary);
+Itinerary.hasMany(ActivityInstance);
 
 Itinerary.belongsTo(User);
 User.hasMany(Itinerary);

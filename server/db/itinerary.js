@@ -1,41 +1,49 @@
-const Sequelize = require('sequelize');
-const db = require('./database');
+const Sequelize = require("sequelize");
+const db = require("./database");
 
-const { STRING, UUID, UUIDV4, DATE, NOW, GEOMETRY, TIME } = Sequelize;
+const { STRING, UUID, UUIDV4, DATE, NOW, GEOMETRY, TIME, FLOAT } = Sequelize;
 
-const Itinerary = db.define('itinerary', {
+const Itinerary = db.define("itinerary", {
   id: {
     type: UUID,
     defaultValue: UUIDV4,
-    primaryKey: true,
+    primaryKey: true
   },
   name: {
     type: STRING,
-    allowNull: false,
+    allowNull: false
   },
   date: {
     type: DATE,
     defaultValue: NOW,
     validate: {
-      isDate: true,
-    },
+      isDate: true
+    }
   },
-  startLocation: {
-    type: GEOMETRY('POINT'),
-    allowNull: false,
+  startLocationLat: {
+    type: FLOAT,
+    allowNull: false
   },
-  endLocation: {
-    type: GEOMETRY('POINT'),
-    allowNull: false,
+  startLocationLong: {
+    type: FLOAT,
+    allowNull: false
+  },
+  endLocationLat: {
+    type: FLOAT,
+    allowNull: false
+  },
+  endLocationLong: {
+    type: FLOAT,
+    allowNull: false
   },
   startTime: {
     type: TIME,
-    allowNull: false,
+    allowNull: false
   },
   endTime: {
     type: TIME,
-    allowNull: false,
-  },
+    allowNull: false
+  }
 });
 
 module.exports = Itinerary;
