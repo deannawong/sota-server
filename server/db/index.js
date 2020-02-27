@@ -1,9 +1,10 @@
-const chalk = require("chalk");
-const db = require("./database");
-const User = require("./user");
-const Activity = require("./activity");
-const ActivityInstance = require("./activityInstance");
-const Itinerary = require("./itinerary");
+const chalk = require('chalk');
+const db = require('./database');
+const User = require('./user');
+const Activity = require('./activity');
+const ActivityInstance = require('./activityInstance');
+const Itinerary = require('./itinerary');
+const Session = require('./session');
 
 //For the geometry type to work, must run this command in CLI:
 // psql capstone_travel_app -c "CREATE EXTENSION postgis"
@@ -17,12 +18,15 @@ Itinerary.belongsTo(User);
 User.hasMany(Itinerary);
 // Activity.belongsToMany(User, { through: Itinerary });
 
+Session.belongsTo(User);
+User.hasOne(Session);
+
 const sync = (force = false) => {
   return db
     .sync({ force })
     .then(() => true)
     .catch(e => {
-      console.log(chalk.red("Error while syncing database."));
+      console.log(chalk.red('Error while syncing database.'));
       console.error(e);
     });
   return false;
@@ -34,5 +38,6 @@ module.exports = {
   User,
   Activity,
   Itinerary,
-  ActivityInstance
+  ActivityInstance,
+  Session,
 };
