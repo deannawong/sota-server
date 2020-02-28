@@ -79,10 +79,12 @@ app.use((req, res, next) => {
             .add(1, 'month')
             .toDate(),
         });
+        next();
       })
       .catch(e => {
         console.log('error creating session');
         console.error(e);
+        next();
       });
   }
 });
