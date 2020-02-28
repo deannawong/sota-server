@@ -21,23 +21,14 @@ const corsOptions = {
       callback(new Error('Origin not allowed by CORS'));
     }
   },
+  methods: ['GET', 'POST', 'OPTIONS', 'PUT', 'PATCH', 'DELETE'],
+  credentials: true,
+  allowedHeaders: ['Origin', 'X-Requested-With', 'Content-Type', 'Accept'],
 };
 
 router.options('*', cors(corsOptions));
 
-router.use((req, res, next) => {
-  res.setHeader(
-    'Access-Control-Allow-Methods',
-    'GET, POST, OPTIONS, PUT, PATCH, DELETE'
-  );
-  res.header('Access-Control-Allow-Credentials', 'true');
-  res.header(
-    'Access-Control-Allow-Headers',
-    'Origin, X-Requested-With, Content-Type, Accept'
-  );
-});
-
-router.post('/login', (req, res, next) => {
+router.post('/login', cors(corsOptions), (req, res, next) => {
   User.findOne({
     where: {
       email: req.body.email,
