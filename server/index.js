@@ -39,9 +39,29 @@ app.use(express.urlencoded({ extended: true }));
 //   next();
 // });
 
+const allowedOrigins = [
+  'capacitor://localhost',
+  'http://localhost',
+  'http://localhost:8100',
+];
+
+const corsOptions = {
+  origin: (origin, callback) => {
+    if (allowedOrigins.includes(origin) || !origin) {
+      callback(null, true);
+    } else {
+      callback(new Error('Origin not allowed by CORS'));
+    }
+  },
+};
+
+app.options('*', cors(corsOptions));
+
 app.use((req, res, next) => {
   // res.header('Access-Control-Allow-Origin', '*');
-  res.header('Access-Control-Allow-Origin', 'http://localhost:8100');
+  // doing with cors
+  // res.header('Access-Control-Allow-Origin', 'http://localhost:8100');
+  //
   res.setHeader(
     'Access-Control-Allow-Methods',
     'GET, POST, OPTIONS, PUT, PATCH, DELETE'
