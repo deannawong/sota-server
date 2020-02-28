@@ -19,7 +19,7 @@ router.post('/login', (req, res, next) => {
         },
         {
           where: {
-            userId: userOrNull.userId,
+            id: userOrNull.userId,
           },
         }
       );
