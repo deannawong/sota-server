@@ -25,20 +25,6 @@ app.use(cookieParser());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// the below is how we make security work from one server to another client
-// need to try both (and maybe more of the options)
-// app.use((req, res, next) => {
-//   // will need to to change localhost to our actual deployed front end app
-//   res.header('Access-Control-Allow-Origin', 'http://localhost:8100');
-// res.header('Access-Control-Allow-Credentials', 'true');
-//   res.header(
-//     'Access-Control-Allow-Headers',
-//     'Origin, X-Requested-With, Content-Type, Accept, Authorization'
-//   );
-
-//   next();
-// });
-
 const allowedOrigins = [
   'capacitor://localhost',
   'http://localhost',
@@ -59,25 +45,6 @@ const corsOptions = {
 };
 
 app.options('*', cors(corsOptions));
-
-// app.use((req, res, next) => {
-//   // res.header('Access-Control-Allow-Origin', '*');
-//   // doing with cors
-//   // res.header('Access-Control-Allow-Origin', 'http://localhost:8100');
-//   //
-//   res.setHeader(
-//     'Access-Control-Allow-Methods',
-//     'GET, POST, OPTIONS, PUT, PATCH, DELETE'
-//   );
-//   //
-//   res.header('Access-Control-Allow-Credentials', 'true');
-//   //
-//   res.header(
-//     'Access-Control-Allow-Headers',
-//     'Origin, X-Requested-With, Content-Type, Accept'
-//   );
-//   next();
-// });
 
 app.use(cors(corsOptions), (req, res, next) => {
   // console.log('request sessionId: ', req.cookies.sessionId);

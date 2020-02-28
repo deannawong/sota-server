@@ -3,10 +3,6 @@ const moment = require('moment');
 const { User, Session } = require('../db/index');
 const cors = require('cors');
 
-// router.use((req, res, next) => {
-//   res.header('Access-Control-Allow-Credentials', 'true');
-// });
-
 const allowedOrigins = [
   'capacitor://localhost',
   'http://localhost',
