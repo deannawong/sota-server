@@ -106,6 +106,7 @@ router.get('/signout', (req, res, next) => {
 
 router.get('/me', cors(corsOptions), (req, res, next) => {
   if (req.user) {
+    console.log('found user');
     return res.send(req.user);
   }
   res.status(401).send(null);
