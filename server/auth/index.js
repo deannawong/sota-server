@@ -1,5 +1,5 @@
 const router = require('express').Router();
-const { User } = require('../db/index');
+const { User, Session } = require('../db/index');
 
 router.post('/login', (req, res, next) => {
   User.findOne({
@@ -13,18 +13,38 @@ router.post('/login', (req, res, next) => {
         res.sendStatus(400);
       }
       if (!userOrNull) return res.sendStatus(401);
-      console.log('cookies in log in post: ', req.cookies);
-      User.update(
-        {
-          sessionId: req.cookies.sessionId,
-        },
-        {
-          where: {
-            id: userOrNull.userId,
+      // console.log('cookies in log in post: ', req.cookies);
+      Session.create().then(newSession => {
+        res.cookie('sessionId', newSession.id, {
+          path: '/',
+          expires: moment
+            .utc()
+            .add(1, 'month')
+            .toDate(),
+        });
+        User.update(
+          {
+            sessionId: newSession.id,
           },
-        }
-      );
-      res.status(200).send(userOrNull);
+          {
+            where: {
+              id: userOrNull.userId,
+            },
+          }
+        );
+        res.status(200).send(userOrNull);
+      });
+      // User.update(
+      //   {
+      //     sessionId: req.cookies.sessionId,
+      //   },
+      //   {
+      //     where: {
+      //       id: userOrNull.userId,
+      //     },
+      //   }
+      // );
+      // res.status(200).send(userOrNull);
     })
     .catch(e => {
       console.log('error signing in');
