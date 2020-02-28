@@ -2,6 +2,10 @@ const router = require('express').Router();
 const moment = require('moment');
 const { User, Session } = require('../db/index');
 
+router.use((req, res, next) => {
+  res.header('Access-Control-Allow-Credentials', 'true');
+});
+
 router.post('/login', (req, res, next) => {
   User.findOne({
     where: {
