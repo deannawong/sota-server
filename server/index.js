@@ -53,8 +53,8 @@ app.use((req, res, next) => {
 });
 
 app.use((req, res, next) => {
-  console.log('sessionId: ', req.cookies.sessionId);
-  console.log('cookies: ', req.cookies);
+  console.log('request sessionId: ', req.cookies.sessionId);
+  console.log('request cookies: ', req.cookies);
   if (req.cookies.sessionId) {
     User.findOne({
       where: {
@@ -74,9 +74,9 @@ app.use((req, res, next) => {
   } else {
     Session.create()
       .then(newSession => {
-        console.log('newSession: ', newSession);
-        console.log('newSessionId: ', newSession.id);
-        console.log('newsession datavalues id: ', newSession.dataValues.id);
+        // console.log('newSession: ', newSession);
+        // console.log('newSessionId: ', newSession.id);
+        // console.log('newsession datavalues id: ', newSession.dataValues.id);
         res.cookie('sessionId', newSession.id, {
           path: '/',
           expires: moment
