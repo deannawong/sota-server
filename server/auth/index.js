@@ -1,12 +1,31 @@
 const router = require('express').Router();
 const moment = require('moment');
 const { User, Session } = require('../db/index');
+const cors = require('cors');
 
 // router.use((req, res, next) => {
 //   res.header('Access-Control-Allow-Credentials', 'true');
 // });
 
-router.post('/login', (req, res, next) => {
+const allowedOrigins = [
+  'capacitor://localhost',
+  'http://localhost',
+  'http://localhost:8100',
+];
+
+const corsOptions = {
+  origin: (origin, callback) => {
+    if (allowedOrigins.includes(origin) || !origin) {
+      callback(null, true);
+    } else {
+      callback(new Error('Origin not allowed by CORS'));
+    }
+  },
+};
+
+router.options('*', cors(corsOptions));
+
+router.post('/login', cors(corsOptions), (req, res, next) => {
   User.findOne({
     where: {
       email: req.body.email,
@@ -82,7 +101,7 @@ router.get('/signout', (req, res, next) => {
   next();
 });
 
-router.get('/me', (req, res, next) => {
+router.get('/me', cors(corsOptions), (req, res, next) => {
   if (req.user) {
     return res.send(req.user);
   }
