@@ -41,22 +41,22 @@ app.use(express.urlencoded({ extended: true }));
 
 app.use((req, res, next) => {
   res.header('Access-Control-Allow-Origin', '*');
-  res.header(
+  res.setHeader(
     'Access-Control-Allow-Methods',
     'GET, POST, OPTIONS, PUT, PATCH, DELETE'
   );
-  //
-  res.header('Access-Control-Allow-Credentials', 'true');
-  //
+  // //
+  // res.header('Access-Control-Allow-Credentials', 'true');
+  // //
   res.header(
     'Access-Control-Allow-Headers',
-    'Origin, X-Requested-With, Content-Type, Accept, Authorization'
+    'Origin, X-Requested-With, Content-Type, Accept'
   );
   next();
 });
 
 app.use((req, res, next) => {
-  console.log('request sessionId: ', req.cookies.sessionId);
+  // console.log('request sessionId: ', req.cookies.sessionId);
   console.log('request cookies: ', req.cookies);
   if (req.cookies.sessionId) {
     User.findOne({
@@ -77,9 +77,6 @@ app.use((req, res, next) => {
   } else {
     Session.create()
       .then(newSession => {
-        // console.log('newSession: ', newSession);
-        // console.log('newSessionId: ', newSession.id);
-        // console.log('newsession datavalues id: ', newSession.dataValues.id);
         res.cookie('sessionId', newSession.id, {
           path: '/',
           expires: moment
@@ -87,7 +84,6 @@ app.use((req, res, next) => {
             .add(1, 'month')
             .toDate(),
         });
-        console.log('request cookies after session create', req.cookies);
         next();
       })
       .catch(e => {
