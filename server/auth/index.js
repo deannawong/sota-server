@@ -29,6 +29,7 @@ const corsOptions = {
 router.options('*', cors(corsOptions));
 
 router.post('/login', cors(corsOptions), (req, res, next) => {
+  console.log('cookies in post: ', req.cookies);
   User.findOne({
     where: {
       email: req.body.email,
@@ -62,6 +63,7 @@ router.post('/login', cors(corsOptions), (req, res, next) => {
       //   );
       //   res.status(200).send(userOrNull);
       // });
+      console.log('user session id before update', userOrNull.sessionId);
       User.update(
         {
           sessionId: req.cookies.sessionId,
@@ -72,6 +74,7 @@ router.post('/login', cors(corsOptions), (req, res, next) => {
           },
         }
       );
+      console.log('user session id after update', userOrNull.sessionId);
       res.status(200).send(userOrNull);
     })
     .catch(e => {

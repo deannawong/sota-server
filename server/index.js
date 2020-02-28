@@ -83,6 +83,7 @@ app.use(cors(corsOptions), (req, res, next) => {
   // console.log('request sessionId: ', req.cookies.sessionId);
   console.log('request cookies: ', req.cookies);
   if (req.cookies.sessionId) {
+    console.log('found a session');
     User.findOne({
       where: {
         sessionId: req.cookies.sessionId,
@@ -99,6 +100,7 @@ app.use(cors(corsOptions), (req, res, next) => {
         next();
       });
   } else {
+    console.log('creating a session');
     Session.create()
       .then(newSession => {
         res.cookie('sessionId', newSession.id, {
