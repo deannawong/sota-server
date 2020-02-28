@@ -13,6 +13,7 @@ router.post('/login', (req, res, next) => {
         res.sendStatus(400);
       }
       if (!userOrNull) return res.sendStatus(401);
+      console.log('cookies in log in post: ', req.cookies);
       User.update(
         {
           sessionId: req.cookies.sessionId,
