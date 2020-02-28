@@ -53,6 +53,8 @@ app.use((req, res, next) => {
 });
 
 app.use((req, res, next) => {
+  console.log('sessionId: ', req.cookies.sessionId);
+  console.log('cookies: ', req.cookies);
   if (req.cookies.sessionId) {
     User.findOne({
       where: {
