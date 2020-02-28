@@ -29,7 +29,7 @@ const corsOptions = {
 router.options('*', cors(corsOptions));
 
 router.post('/login', cors(corsOptions), (req, res, next) => {
-  console.log('cookies in post: ', req.cookies);
+  console.log('session cookie in post: ', req.cookies.sessionId);
   User.findOne({
     where: {
       email: req.body.email,
@@ -42,40 +42,40 @@ router.post('/login', cors(corsOptions), (req, res, next) => {
       }
       if (!userOrNull) return res.sendStatus(401);
       // console.log('cookies in log in post: ', req.cookies);
-      // Session.create().then(newSession => {
-      //   console.log('new session id created in post: ', newSession.id);
-      //   res.cookie('sessionId', newSession.id, {
-      //     path: '/',
-      //     expires: moment
-      //       .utc()
-      //       .add(1, 'month')
-      //       .toDate(),
-      //   });
-      //   User.update(
-      //     {
-      //       sessionId: newSession.id,
-      //     },
-      //     {
-      //       where: {
-      //         id: userOrNull.id,
-      //       },
-      //     }
-      //   );
-      //   res.status(200).send(userOrNull);
-      // });
-      console.log('user session id before update', userOrNull.sessionId);
-      User.update(
-        {
-          sessionId: req.cookies.sessionId,
-        },
-        {
-          where: {
-            id: userOrNull.id,
+      Session.create().then(newSession => {
+        console.log('new session id created in post: ', newSession.id);
+        res.cookie('sessionId', newSession.id, {
+          path: '/',
+          expires: moment
+            .utc()
+            .add(1, 'month')
+            .toDate(),
+        });
+        User.update(
+          {
+            sessionId: newSession.id,
           },
-        }
-      );
-      console.log('user session id after update', userOrNull.sessionId);
-      res.status(200).send(userOrNull);
+          {
+            where: {
+              id: userOrNull.id,
+            },
+          }
+        );
+        res.status(200).send(userOrNull);
+      });
+      // console.log('user session id before update', userOrNull.sessionId);
+      // User.update(
+      //   {
+      //     sessionId: req.cookies.sessionId,
+      //   },
+      //   {
+      //     where: {
+      //       id: userOrNull.id,
+      //     },
+      //   }
+      // );
+      // console.log('user session id after update', userOrNull.sessionId);
+      // res.status(200).send(userOrNull);
     })
     .catch(e => {
       console.log('error signing in');
