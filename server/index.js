@@ -72,9 +72,9 @@ app.use((req, res, next) => {
         next();
       });
   } else {
-    console.log('in session create');
     Session.create()
       .then(newSession => {
+        console.log('newSession: ', newSession);
         res.cookie('sessionId', newSession.id, {
           path: '/',
           expires: moment
