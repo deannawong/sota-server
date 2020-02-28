@@ -72,6 +72,7 @@ app.use((req, res, next) => {
         next();
       });
   } else {
+    console.log('in session create');
     Session.create()
       .then(newSession => {
         res.cookie('sessionId', newSession.id, {
@@ -81,6 +82,7 @@ app.use((req, res, next) => {
             .add(1, 'month')
             .toDate(),
         });
+        console.log('request cookies after session create', req.cookies);
         next();
       })
       .catch(e => {
