@@ -2,9 +2,9 @@ const router = require('express').Router();
 const moment = require('moment');
 const { User, Session } = require('../db/index');
 
-router.use((req, res, next) => {
-  res.header('Access-Control-Allow-Credentials', 'true');
-});
+// router.use((req, res, next) => {
+//   res.header('Access-Control-Allow-Credentials', 'true');
+// });
 
 router.post('/login', (req, res, next) => {
   User.findOne({
@@ -19,38 +19,38 @@ router.post('/login', (req, res, next) => {
       }
       if (!userOrNull) return res.sendStatus(401);
       // console.log('cookies in log in post: ', req.cookies);
-      Session.create().then(newSession => {
-        console.log('new session id created in post: ', newSession.id);
-        res.cookie('sessionId', newSession.id, {
-          path: '/',
-          expires: moment
-            .utc()
-            .add(1, 'month')
-            .toDate(),
-        });
-        User.update(
-          {
-            sessionId: newSession.id,
-          },
-          {
-            where: {
-              id: userOrNull.id,
-            },
-          }
-        );
-        res.status(200).send(userOrNull);
-      });
-      // User.update(
-      //   {
-      //     sessionId: req.cookies.sessionId,
-      //   },
-      //   {
-      //     where: {
-      //       id: userOrNull.id,
+      // Session.create().then(newSession => {
+      //   console.log('new session id created in post: ', newSession.id);
+      //   res.cookie('sessionId', newSession.id, {
+      //     path: '/',
+      //     expires: moment
+      //       .utc()
+      //       .add(1, 'month')
+      //       .toDate(),
+      //   });
+      //   User.update(
+      //     {
+      //       sessionId: newSession.id,
       //     },
-      //   }
-      // );
-      // res.status(200).send(userOrNull);
+      //     {
+      //       where: {
+      //         id: userOrNull.id,
+      //       },
+      //     }
+      //   );
+      //   res.status(200).send(userOrNull);
+      // });
+      User.update(
+        {
+          sessionId: req.cookies.sessionId,
+        },
+        {
+          where: {
+            id: userOrNull.id,
+          },
+        }
+      );
+      res.status(200).send(userOrNull);
     })
     .catch(e => {
       console.log('error signing in');
