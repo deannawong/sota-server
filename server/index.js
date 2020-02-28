@@ -56,7 +56,7 @@ app.use((req, res, next) => {
   if (req.cookies.sessionId) {
     User.findOne({
       where: {
-        SessionId: req.cookies.sessionId,
+        sessionId: req.cookies.sessionId,
       },
     })
       .then(userOrNull => {
