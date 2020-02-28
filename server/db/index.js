@@ -18,8 +18,8 @@ Itinerary.belongsTo(User);
 User.hasMany(Itinerary);
 // Activity.belongsToMany(User, { through: Itinerary });
 
-Session.belongsTo(User);
-User.hasOne(Session);
+Session.hasOne(User);
+User.belongsTo(Session);
 
 const sync = (force = false) => {
   return db
