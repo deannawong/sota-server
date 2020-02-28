@@ -79,7 +79,7 @@ app.options('*', cors(corsOptions));
 //   next();
 // });
 
-app.use((req, res, next) => {
+app.use(cors(corsOptions), (req, res, next) => {
   // console.log('request sessionId: ', req.cookies.sessionId);
   console.log('request cookies: ', req.cookies);
   if (req.cookies.sessionId) {
