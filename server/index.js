@@ -75,6 +75,8 @@ app.use((req, res, next) => {
     Session.create()
       .then(newSession => {
         console.log('newSession: ', newSession);
+        console.log('newSessionId: ', newSession.id);
+        console.log('newsession datavalues id: ', newSession.dataValues.id);
         res.cookie('sessionId', newSession.id, {
           path: '/',
           expires: moment
