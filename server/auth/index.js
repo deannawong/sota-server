@@ -16,6 +16,8 @@ router.post('/login', (req, res, next) => {
       if (!userOrNull) return res.sendStatus(401);
       // console.log('cookies in log in post: ', req.cookies);
       Session.create().then(newSession => {
+        console.log('new session id created in post: ', newSession.id);
+        console.log('user: ', userOrNull);
         res.cookie('sessionId', newSession.id, {
           path: '/',
           expires: moment
@@ -29,7 +31,7 @@ router.post('/login', (req, res, next) => {
           },
           {
             where: {
-              id: userOrNull.userId,
+              id: userOrNull.id,
             },
           }
         );
@@ -41,7 +43,7 @@ router.post('/login', (req, res, next) => {
       //   },
       //   {
       //     where: {
-      //       id: userOrNull.userId,
+      //       id: userOrNull.id,
       //     },
       //   }
       // );
