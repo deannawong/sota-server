@@ -30,7 +30,7 @@ app.use(express.urlencoded({ extended: true }));
 // app.use((req, res, next) => {
 //   // will need to to change localhost to our actual deployed front end app
 //   res.header('Access-Control-Allow-Origin', 'http://localhost:8100');
-//   res.header('Access-Control-Allow-Credentials', 'true');
+// res.header('Access-Control-Allow-Credentials', 'true');
 //   res.header(
 //     'Access-Control-Allow-Headers',
 //     'Origin, X-Requested-With, Content-Type, Accept, Authorization'
@@ -45,6 +45,9 @@ app.use((req, res, next) => {
     'Access-Control-Allow-Methods',
     'GET, POST, OPTIONS, PUT, PATCH, DELETE'
   );
+  //
+  res.header('Access-Control-Allow-Credentials', 'true');
+  //
   res.header(
     'Access-Control-Allow-Headers',
     'Origin, X-Requested-With, Content-Type, Accept'
