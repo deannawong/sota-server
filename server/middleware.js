@@ -6,7 +6,7 @@ const checkToken = (res, req, next) => {
   if (token.startsWith('Bearer')) {
     token = token.slice(7, token.length);
   }
-
+  console.log('token after slice in checkToken: ', token);
   if (token) {
     jwt.verify(token, procses.env.JWT_TOKEN, (err, decoded) => {
       if (err) {

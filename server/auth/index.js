@@ -20,14 +20,20 @@ const corsOptions = {
     }
   },
   methods: ['GET', 'POST', 'OPTIONS', 'PUT', 'PATCH', 'DELETE'],
-  credentials: true,
-  allowedHeaders: ['Origin', 'X-Requested-With', 'Content-Type', 'Accept'],
+  // credentials: true,
+  allowedHeaders: [
+    'Origin',
+    'X-Requested-With',
+    'Content-Type',
+    'Accept',
+    'Authorization',
+  ],
 };
 
 router.options('*', cors(corsOptions));
 
 router.post('/login', cors(corsOptions), (req, res, next) => {
-  console.log('session cookie in post: ', req.cookies.sessionId);
+  // console.log('session cookie in post: ', req.cookies.sessionId);
   User.findOne({
     where: {
       email: req.body.email,
@@ -150,7 +156,7 @@ router.get('/signout', (req, res, next) => {
   next();
 });
 
-router.get('/me', cors(corsOptions), (req, res, next) => {
+router.get('/me', [cors(corsOptions), checkToken], (req, res, next) => {
   if (req.user) {
     console.log('found user');
     return res.send(req.user);
