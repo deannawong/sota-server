@@ -40,17 +40,16 @@ router.post('/login', cors(corsOptions), (req, res, next) => {
       }
       if (!userOrNull) return res.sendStatus(401);
       // console.log('cookies in log in post: ', req.cookies);
-      let token = jwt.sign({email: req.body.email}, process.env.JWT_TOKEN, {
-        expiresIn: '1h'
+      let token = jwt.sign({ email: req.body.email }, process.env.JWT_TOKEN, {
+        expiresIn: '1h',
       });
       res.json({
         success: true,
         message: 'Authentication successful!',
         token: token,
-      })
+      });
 
       res.status(200).send(userOrNull);
-      });
       // console.log('user session id before update', userOrNull.sessionId);
       // User.update(
       //   {
