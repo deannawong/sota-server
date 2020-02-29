@@ -44,10 +44,10 @@ router.post('/login', cors(corsOptions), (req, res, next) => {
         return res.sendStatus(400);
       }
       if (!userOrNull) return res.sendStatus(401);
+      // might want to change expiration time
       let token = jwt.sign({ email: req.body.email }, process.env.JWT_TOKEN, {
         expiresIn: '1h',
       });
-      // might need to make token: token
       User.update(
         {
           token,
@@ -73,62 +73,6 @@ router.post('/login', cors(corsOptions), (req, res, next) => {
     });
 });
 
-// router.post('/login', cors(corsOptions), (req, res, next) => {
-//   console.log('session cookie in post: ', req.cookies.sessionId);
-//   User.findOne({
-//     where: {
-//       email: req.body.email,
-//     },
-//   })
-//     .then(userOrNull => {
-//       if (userOrNull && !userOrNull.isPasswordValid(req.body.password)) {
-//         console.error('invalid password');
-//         return res.sendStatus(400);
-//       }
-//       if (!userOrNull) return res.sendStatus(401);
-//       // console.log('cookies in log in post: ', req.cookies);
-//       Session.create().then(newSession => {
-//         console.log('new session id created in post: ', newSession.id);
-//         res.cookie('sessionId', newSession.id, {
-//           path: '/',
-//           expires: moment
-//             .utc()
-//             .add(1, 'month')
-//             .toDate(),
-//         });
-//         User.update(
-//           {
-//             sessionId: newSession.id,
-//           },
-//           {
-//             where: {
-//               id: userOrNull.id,
-//             },
-//           }
-//         );
-//         res.status(200).send(userOrNull);
-//       });
-//       // console.log('user session id before update', userOrNull.sessionId);
-//       // User.update(
-//       //   {
-//       //     sessionId: req.cookies.sessionId,
-//       //   },
-//       //   {
-//       //     where: {
-//       //       id: userOrNull.id,
-//       //     },
-//       //   }
-//       // );
-//       // console.log('user session id after update', userOrNull.sessionId);
-//       // res.status(200).send(userOrNull);
-//     })
-//     .catch(e => {
-//       console.log('error signing in');
-//       console.error(e);
-//       next();
-//     });
-// });
-
 router.post('/signup', (req, res, next) => {
   req.body.sessionId = req.cookies.sessionId;
   User.findOrCreate({
@@ -146,10 +90,31 @@ router.post('/signup', (req, res, next) => {
     });
 });
 
-router.get('/signout', (req, res, next) => {
-  res.clearCookie('sessionId');
-  res.sendStatus(204);
-  next();
+router.post('/logout', cors(corsOptions), (req, res, next) => {
+  User.findOne({
+    where: {
+      email: req.body,
+    },
+  })
+    .then(userOrNull => {
+      if (!userOrNull) {
+        return res.sendStatus(401);
+      }
+      // a couple options
+      // 1) set req.user = null and set req.headers.authorization = null;
+      // 2) set req.user = null and update user to make token empty string
+
+      // try (1) first
+      delete req.user;
+      delete req.headers.authorization;
+      res.sendStatus(204);
+      next();
+    })
+    .catch(e => {
+      console.log('error signing out');
+      console.error(e);
+      next();
+    });
 });
 
 router.get('/me', cors(corsOptions), checkToken, (req, res, next) => {

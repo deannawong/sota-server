@@ -46,6 +46,7 @@ const User = db.define(
       },
     },
     token: {
+      // probably want to hash this...
       type: STRING,
       allowNull: false,
       defaultValue: '',
