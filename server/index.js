@@ -57,15 +57,16 @@ app.options('*', cors(corsOptions));
 app.use(cors(corsOptions), (req, res, next) => {
   // console.log('request sessionId: ', req.cookies.sessionId);
   // console.log('request cookies: ', req.cookies);
-  console.log('token in app.use: ', req.headers.authorization);
+
   const token = req.headers.authorization;
+  console.log('token in app.use: ', token);
   if (!token) {
     next();
     return;
   }
   User.findOne({
     where: {
-      token,
+      token: token,
     },
   })
     .then(userOrNull => {
