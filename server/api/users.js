@@ -20,4 +20,13 @@ router.get("/", (req, res, next) => {
     .catch(err => next(err));
 });
 
+router.post("/", (req, res, next) => {
+  User.create(req.body)
+    .then(newUser => res.status(200).send(newUser))
+    .catch(err => {
+      console.err("Error with creating new user.");
+      next(err);
+    })
+})
+
 module.exports = router;
