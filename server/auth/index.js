@@ -91,14 +91,12 @@ router.post('/signup', (req, res, next) => {
 });
 
 router.post('/logout', cors(corsOptions), (req, res, next) => {
-  console.log('req body in sign out: **********************', req.body);
   User.findOne({
     where: {
       email: req.body.email,
     },
   })
     .then(userOrNull => {
-      console.log('found user! : ', userOrNull);
       if (!userOrNull) {
         return res.sendStatus(401);
       }
@@ -109,6 +107,16 @@ router.post('/logout', cors(corsOptions), (req, res, next) => {
       // try (1) first
       delete req.user;
       delete req.headers.authorization;
+      User.update(
+        {
+          token: '',
+        },
+        {
+          where: {
+            id: userOrNull.id,
+          },
+        }
+      );
       res.sendStatus(204);
       next();
     })
