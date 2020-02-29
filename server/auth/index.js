@@ -33,7 +33,6 @@ const corsOptions = {
 router.options('*', cors(corsOptions));
 
 router.post('/login', cors(corsOptions), (req, res, next) => {
-  // console.log('session cookie in post: ', req.cookies.sessionId);
   User.findOne({
     where: {
       email: req.body.email,
@@ -45,32 +44,27 @@ router.post('/login', cors(corsOptions), (req, res, next) => {
         return res.sendStatus(400);
       }
       if (!userOrNull) return res.sendStatus(401);
-      // console.log('cookies in log in post: ', req.cookies);
       let token = jwt.sign({ email: req.body.email }, process.env.JWT_TOKEN, {
         expiresIn: '1h',
       });
+
+      User.update(
+        {
+          token,
+        },
+        {
+          where: {
+            id: userOrNull.id,
+          },
+        }
+      );
+
       res.status(200).json({
         success: true,
         message: 'Authentication successful!',
         token: token,
         user: userOrNull,
       });
-
-      // res.status(200).send(userOrNull);
-
-      // console.log('user session id before update', userOrNull.sessionId);
-      // User.update(
-      //   {
-      //     sessionId: req.cookies.sessionId,
-      //   },
-      //   {
-      //     where: {
-      //       id: userOrNull.id,
-      //     },
-      //   }
-      // );
-      // console.log('user session id after update', userOrNull.sessionId);
-      // res.status(200).send(userOrNull);
     })
     .catch(e => {
       console.log('error signing in');
@@ -159,10 +153,6 @@ router.get('/signout', (req, res, next) => {
 });
 
 router.get('/me', cors(corsOptions), checkToken, (req, res, next) => {
-  console.log(
-    'check token in /auth/me route ^^^^^^^^^^^^^^^^^^^^^^',
-    checkToken
-  );
   if (req.user) {
     console.log('found user');
     return res.send(req.user);
