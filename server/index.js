@@ -69,6 +69,7 @@ app.use(cors(corsOptions), (req, res, next) => {
     },
   })
     .then(userOrNull => {
+      console.log('found that user! it is : ', userOrNull);
       if (userOrNull) {
         req.user = userOrNull;
       }
