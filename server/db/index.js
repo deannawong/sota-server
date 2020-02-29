@@ -5,7 +5,6 @@ const Activity = require('./activity');
 const ActivityInstance = require('./activityInstance');
 const Itinerary = require('./itinerary');
 const Session = require('./session');
-// const Token = require('./token');
 
 ActivityInstance.belongsTo(Itinerary);
 Itinerary.hasMany(ActivityInstance);
