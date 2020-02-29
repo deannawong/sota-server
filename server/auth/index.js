@@ -83,6 +83,7 @@ router.post('/signup', (req, res, next) => {
       let token = jwt.sign({ email: userOrNull.email }, process.env.JWT_TOKEN, {
         expiresIn: '1h',
       });
+      console.log('token: ', token);
       User.update(
         {
           token,
@@ -93,10 +94,10 @@ router.post('/signup', (req, res, next) => {
           },
         }
       );
-
+      console.log('user after update: ', userOrNull);
       req.headers.authorization = token;
       req.user = userOrNull;
-      res.send(user);
+      res.send(userOrNull);
     })
     .catch(e => {
       console.log('error creating user');
