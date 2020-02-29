@@ -157,6 +157,10 @@ router.get('/signout', (req, res, next) => {
 });
 
 router.get('/me', cors(corsOptions), checkToken, (req, res, next) => {
+  console.log(
+    'check token in /auth/me route ^^^^^^^^^^^^^^^^^^^^^^',
+    checkToken
+  );
   if (req.user) {
     console.log('found user');
     return res.send(req.user);
