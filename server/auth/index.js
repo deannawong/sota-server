@@ -156,14 +156,18 @@ router.get('/signout', (req, res, next) => {
   next();
 });
 
-router.get('/me', [cors(corsOptions), checkToken], (req, res, next) => {
-  if (req.user) {
-    console.log('found user');
-    return res.send(req.user);
+router.get(
+  '/me',
+  [cors(corsOptions), checkToken(req, res, next)],
+  (req, res, next) => {
+    if (req.user) {
+      console.log('found user');
+      return res.send(req.user);
+    }
+    res.status(401).send(null);
+    console.log('no user found');
+    next();
   }
-  res.status(401).send(null);
-  console.log('no user found');
-  next();
-});
+);
 
 module.exports = router;
