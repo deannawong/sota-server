@@ -91,12 +91,14 @@ router.post('/signup', (req, res, next) => {
 });
 
 router.post('/logout', cors(corsOptions), (req, res, next) => {
+  console.log('req body in sign out: **********************', req.body);
   User.findOne({
     where: {
       email: req.body,
     },
   })
     .then(userOrNull => {
+      console.log('found user! : ', userOrNull);
       if (!userOrNull) {
         return res.sendStatus(401);
       }
