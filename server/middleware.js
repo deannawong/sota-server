@@ -2,6 +2,7 @@ const jwt = require('jsonwebtoken');
 // JWT
 const checkToken = (res, req, next) => {
   // might need to add these headers to accepted CORS
+  console.log('req in checkToken: ', req);
   let token = req.headers['x-access-token'] || req.headers['authorization'];
   if (token.startsWith('Bearer')) {
     token = token.slice(7, token.length);
