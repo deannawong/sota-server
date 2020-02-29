@@ -53,6 +53,13 @@ const corsOptions = {
 
 app.options('*', cors(corsOptions));
 
+// app.use was here
+
+//routes
+
+app.use('/api', require('./api'));
+app.use('/auth', require('./auth'));
+
 app.use(cors(corsOptions), checkToken, (req, res, next) => {
   // console.log('request sessionId: ', req.cookies.sessionId);
   // console.log('request cookies: ', req.cookies);
@@ -111,11 +118,6 @@ app.use(cors(corsOptions), checkToken, (req, res, next) => {
   //     });
   // }
 });
-
-//routes
-
-app.use('/api', require('./api'));
-app.use('/auth', require('./auth'));
 app.get('*', (req, res) => {
   res.sendFile(path.join(__dirname, '../static/index.html'));
 });
