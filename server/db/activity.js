@@ -2,7 +2,7 @@ const Sequelize = require("sequelize");
 const db = require("./database");
 
 const { STRING, UUID, UUIDV4, ENUM, FLOAT } = Sequelize;
-
+//THIS MODEL MAY NO LONGER BE NEEDED//
 const Activity = db.define("activity", {
   id: {
     type: UUID,

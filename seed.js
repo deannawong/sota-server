@@ -34,44 +34,6 @@ const seed = () => {
           userId: userJames.id
         });
       })
-      .then(jamesItinerary =>
-        ActivityInstance.create({
-          startTime: "10:00",
-          endTime: "12:00",
-          date: jamesItinerary.date,
-          duration: 2.0,
-          itineraryId: jamesItinerary.id
-        })
-      )
-      .then(() => {
-        return axios.get(
-          "https://www.triposo.com/api/20190906/poi.json?location_id=New_York_City&count=100&fields=id,name,coordinates,tags",
-          {
-            headers: {
-              "X-Triposo-Account": "TNLT0JW7",
-              "X-Triposo-Token": "t0jw7n30yhgebkre1hisqd696bhfquhx"
-            }
-          }
-        );
-      })
-      .then(triposoResponse => {
-        const { results } = triposoResponse.data;
-        const processedResults = [];
-
-        results.forEach(activity => {
-          const { name, coordinates, tags } = activity;
-          if (name && coordinates && tags) {
-            processedResults.push({
-              name: name,
-              locationLat: coordinates.latitude,
-              locationLong: coordinates.longitude,
-              type: tags[0].tag.name
-            });
-          }
-        });
-        return processedResults;
-      })
-      .then(processedResults => Activity.bulkCreate(processedResults));
   });
 };
 module.exports = seed;
