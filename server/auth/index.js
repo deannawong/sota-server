@@ -47,7 +47,7 @@ router.post('/login', cors(corsOptions), (req, res, next) => {
       let token = jwt.sign({ email: req.body.email }, process.env.JWT_TOKEN, {
         expiresIn: '1h',
       });
-
+      // might need to make token: token
       User.update(
         {
           token,
