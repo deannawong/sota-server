@@ -1,10 +1,11 @@
-const chalk = require("chalk");
-const db = require("./database");
-const User = require("./user");
-const Activity = require("./activity");
-const ActivityInstance = require("./activityInstance");
-const Itinerary = require("./itinerary");
-const Session = require("./session");
+const chalk = require('chalk');
+const db = require('./database');
+const User = require('./user');
+const Activity = require('./activity');
+const ActivityInstance = require('./activityInstance');
+const Itinerary = require('./itinerary');
+const Session = require('./session');
+// const Token = require('./token');
 
 ActivityInstance.belongsTo(Itinerary);
 Itinerary.hasMany(ActivityInstance);
@@ -24,7 +25,7 @@ const sync = (force = false) => {
     .sync({ force })
     .then(() => true)
     .catch(e => {
-      console.log(chalk.red("Error while syncing database."));
+      console.log(chalk.red('Error while syncing database.'));
       console.error(e);
     });
   return false;
@@ -37,5 +38,5 @@ module.exports = {
   Activity,
   Itinerary,
   ActivityInstance,
-  Session
+  Session,
 };
