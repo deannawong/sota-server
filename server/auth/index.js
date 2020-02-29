@@ -86,7 +86,12 @@ router.post('/signup', (req, res, next) => {
 
       req.headers.authorization = newUser.token;
       req.user = userOrNull;
-      res.send(userOrNull);
+      res.status(201).json({
+        success: true,
+        message: 'Authentication successful!',
+        token: token,
+        user: userOrNull,
+      });
     })
     .catch(e => {
       console.log('error creating user');
