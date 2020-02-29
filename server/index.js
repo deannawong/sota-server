@@ -6,7 +6,6 @@ const cookieParser = require('cookie-parser');
 const cors = require('cors');
 const volleyball = require('volleyball');
 const moment = require('moment');
-const { checkToken } = require('./middleware');
 
 if (process.env.NODE_ENV !== 'production') require('dotenv').config();
 
@@ -53,12 +52,8 @@ const corsOptions = {
 
 app.options('*', cors(corsOptions));
 
-// app.use was here
 app.use(cors(corsOptions), (req, res, next) => {
-  // console.log('request sessionId: ', req.cookies.sessionId);
-  // console.log('request cookies: ', req.cookies);
   let token = req.headers.authorization;
-  console.log('token in app.use: ', token);
   if (!token) {
     next();
     return;
@@ -72,7 +67,6 @@ app.use(cors(corsOptions), (req, res, next) => {
     },
   })
     .then(userOrNull => {
-      console.log('found that user! it is : ', userOrNull);
       if (userOrNull) {
         req.user = userOrNull;
       }
@@ -82,43 +76,6 @@ app.use(cors(corsOptions), (req, res, next) => {
       console.error('error finding requested user: ', e);
       next();
     });
-
-  // if (req.cookies.sessionId) {
-  //   // console.log('found a session');
-  //   User.findOne({
-  //     where: {
-  //       sessionId: req.cookies.sessionId,
-  //     },
-  //   })
-  //     .then(userOrNull => {
-  //       if (userOrNull) {
-  //         req.user = userOrNull;
-  //       }
-  //       next();
-  //     })
-  //     .catch(e => {
-  //       console.error('error finding requested user: ', e);
-  //       next();
-  //     });
-  // } else {
-  //   // console.log('creating a session');
-  //   Session.create()
-  //     .then(newSession => {
-  //       res.cookie('sessionId', newSession.id, {
-  //         path: '/',
-  //         expires: moment
-  //           .utc()
-  //           .add(1, 'month')
-  //           .toDate(),
-  //       });
-  //       next();
-  //     })
-  //     .catch(e => {
-  //       console.log('error creating session');
-  //       console.error(e);
-  //       next();
-  //     });
-  // }
 });
 
 //routes
