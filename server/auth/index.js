@@ -49,13 +49,15 @@ router.post('/login', cors(corsOptions), (req, res, next) => {
       let token = jwt.sign({ email: req.body.email }, process.env.JWT_TOKEN, {
         expiresIn: '1h',
       });
-      res.json({
+      res.status(200).json({
         success: true,
         message: 'Authentication successful!',
         token: token,
+        user: userOrNull,
       });
 
-      res.status(200).send(userOrNull);
+      // res.status(200).send(userOrNull);
+
       // console.log('user session id before update', userOrNull.sessionId);
       // User.update(
       //   {
