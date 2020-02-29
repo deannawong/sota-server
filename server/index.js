@@ -40,17 +40,23 @@ const corsOptions = {
     }
   },
   methods: ['GET', 'POST', 'OPTIONS', 'PUT', 'PATCH', 'DELETE'],
-  credentials: true,
-  allowedHeaders: ['Origin', 'X-Requested-With', 'Content-Type', 'Accept'],
+  // credentials: true,
+  allowedHeaders: [
+    'Origin',
+    'X-Requested-With',
+    'Content-Type',
+    'Accept',
+    'Authorization',
+  ],
 };
 
 app.options('*', cors(corsOptions));
 
 app.use(cors(corsOptions), (req, res, next) => {
   // console.log('request sessionId: ', req.cookies.sessionId);
-  console.log('request cookies: ', req.cookies);
+  // console.log('request cookies: ', req.cookies);
   if (req.cookies.sessionId) {
-    console.log('found a session');
+    // console.log('found a session');
     User.findOne({
       where: {
         sessionId: req.cookies.sessionId,
@@ -67,7 +73,7 @@ app.use(cors(corsOptions), (req, res, next) => {
         next();
       });
   } else {
-    console.log('creating a session');
+    // console.log('creating a session');
     Session.create()
       .then(newSession => {
         res.cookie('sessionId', newSession.id, {
