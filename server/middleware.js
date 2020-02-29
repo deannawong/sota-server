@@ -1,6 +1,6 @@
 const jwt = require('jsonwebtoken');
 // JWT
-const checkToken = (res, req, next) => {
+const checkToken = (req, res, next) => {
   // might need to add these headers to accepted CORS
   console.log(
     'req headers in checkToken: &&&&&&&&&&&&&&&&&&&&&&&&&&&&&',
