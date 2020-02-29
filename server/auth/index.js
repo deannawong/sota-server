@@ -74,29 +74,17 @@ router.post('/login', cors(corsOptions), (req, res, next) => {
 });
 
 router.post('/signup', (req, res, next) => {
+  const newUser = req.body;
+  newUser.token = jwt.sign({ email: req.body.email }, process.env.JWT_TOKEN, {
+    expiresIn: '1h',
+  });
   User.findOrCreate({
-    where: req.body,
+    where: newUser,
   })
     .then(userOrNull => {
       if (!userOrNull) return res.status(500).send('error creating user');
 
-      let token = jwt.sign({ email: userOrNull.email }, process.env.JWT_TOKEN, {
-        expiresIn: '1h',
-      });
-      // need to fix this so you can create an account and then be signed in
-      console.log('token: ', token);
-      User.update(
-        {
-          token,
-        },
-        {
-          where: {
-            id: userOrNull.id,
-          },
-        }
-      );
-      console.log('user after update: ', userOrNull);
-      req.headers.authorization = token;
+      req.headers.authorization = newUser.token;
       req.user = userOrNull;
       res.send(userOrNull);
     })
