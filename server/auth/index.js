@@ -88,8 +88,8 @@ router.post('/signup', (req, res, next) => {
       req.user = userOrNull;
       res.status(201).json({
         success: true,
-        message: 'Authentication successful!',
-        token: token,
+        message: 'User created and authentication successful!',
+        token: newUser.token,
         user: userOrNull,
       });
     })
