@@ -13,7 +13,7 @@ const checkToken = (req, res, next) => {
   }
   // console.log('token after slice in checkToken: *******************', token);
   if (token) {
-    jwt.verify(token, procses.env.JWT_TOKEN, (err, decoded) => {
+    jwt.verify(token, process.env.JWT_TOKEN, (err, decoded) => {
       if (err) {
         return res.json({
           success: false,
