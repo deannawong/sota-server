@@ -49,9 +49,6 @@ const User = db.define(
       type: STRING,
       allowNull: false,
       defaultValue: '',
-      validate: {
-        notEmpty: true,
-      },
     },
   },
   {
