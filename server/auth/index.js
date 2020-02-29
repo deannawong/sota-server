@@ -74,12 +74,27 @@ router.post('/login', cors(corsOptions), (req, res, next) => {
 });
 
 router.post('/signup', (req, res, next) => {
-  req.body.sessionId = req.cookies.sessionId;
   User.findOrCreate({
     where: req.body,
   })
     .then(userOrNull => {
       if (!userOrNull) return res.status(500).send('error creating user');
+
+      let token = jwt.sign({ email: userOrNull.email }, process.env.JWT_TOKEN, {
+        expiresIn: '1h',
+      });
+      User.update(
+        {
+          token,
+        },
+        {
+          where: {
+            id: userOrNull.id,
+          },
+        }
+      );
+
+      req.headers.authorization = token;
       req.user = userOrNull;
       res.send(user);
     })
@@ -100,11 +115,6 @@ router.post('/logout', cors(corsOptions), (req, res, next) => {
       if (!userOrNull) {
         return res.sendStatus(401);
       }
-      // a couple options
-      // 1) set req.user = null and set req.headers.authorization = null;
-      // 2) set req.user = null and update user to make token empty string
-
-      // try (1) first
       delete req.user;
       delete req.headers.authorization;
       User.update(
