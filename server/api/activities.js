@@ -30,9 +30,4 @@ router.post("/", (req, res, next) => {
   );
 });
 
-router.get("/:itineraryId", (req, res, next) => {
-  const { itineraryId } = req.params
-  Activity.findAll({ where: { itineraryId: itineraryId } })
-})
-
 module.exports = router;
