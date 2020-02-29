@@ -94,7 +94,7 @@ router.post('/logout', cors(corsOptions), (req, res, next) => {
   console.log('req body in sign out: **********************', req.body);
   User.findOne({
     where: {
-      email: req.body,
+      email: req.body.email,
     },
   })
     .then(userOrNull => {
