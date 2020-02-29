@@ -83,6 +83,7 @@ router.post('/signup', (req, res, next) => {
       let token = jwt.sign({ email: userOrNull.email }, process.env.JWT_TOKEN, {
         expiresIn: '1h',
       });
+      // need to fix this so you can create an account and then be signed in
       console.log('token: ', token);
       User.update(
         {
@@ -138,12 +139,18 @@ router.post('/logout', cors(corsOptions), (req, res, next) => {
     });
 });
 
-router.get('/me', cors(corsOptions), checkToken, (req, res, next) => {
+router.get('/me', cors(corsOptions), (req, res, next) => {
+  let token = req.headers.authorization;
+  if (!token) {
+    console.log('no token in get to auth/me');
+    res.sendStatus(401);
+    next();
+  }
   if (req.user) {
     console.log('found user');
     return res.send(req.user);
   }
-  res.status(401).send(null);
+  res.sendStatus(401);
   console.log('no user found');
   next();
 });
