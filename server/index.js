@@ -58,13 +58,13 @@ app.use(cors(corsOptions), (req, res, next) => {
   // console.log('request sessionId: ', req.cookies.sessionId);
   // console.log('request cookies: ', req.cookies);
   let token = req.headers.authorization;
-  if (token.startsWith('Bearer')) {
-    token = token.slice(7, token.length);
-  }
   console.log('token in app.use: ', token);
   if (!token) {
     next();
     return;
+  }
+  if (token.startsWith('Bearer')) {
+    token = token.slice(7, token.length);
   }
   User.findOne({
     where: {
