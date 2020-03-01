@@ -7,7 +7,12 @@ const cors = require('cors');
 const volleyball = require('volleyball');
 const moment = require('moment');
 
-if (process.env.NODE_ENV !== 'production') require('dotenv').config();
+
+if (process.env.NODE_ENV !== 'production') {
+  require('dotenv').config()
+} else {
+  require('dotenv').load();
+};
 
 //initialize express
 const app = express();

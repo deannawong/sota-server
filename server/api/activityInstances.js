@@ -1,5 +1,6 @@
 const router = require("express").Router();
 const { ActivityInstance } = require("../db");
+const { urlGenerator } = require("./utils")
 
 router.get("/", (req, res, next) => {
   ActivityInstance.findAll()
@@ -46,15 +47,16 @@ router.put("/:id", (req, res, next) => {
 
 router.post("/newActivities/:itineraryId", (req, res, next) => {
   const { itineraryId } = req.params
-  //Will need to edit the Axios URL once we have tags we want to use.
-  //tags will need to be an array. 
-  const { tags, city } = req.body
+  // const { tags, location, budget, coordinates } = req.body
+  //coordinates must be start location
+  const triposoUrl = urlGenerator(req.body);
   axios.get(
-    "https://www.triposo.com/api/20190906/poi.json?location_id=New_York_City&count=20&fields=id,name,coordinates,tags",
+    triposoUrl,
+    // "https://www.triposo.com/api/20190906/poi.json?tag_labels=food|museums|poitype-Museum_district|subtype-Natural_history_museums&location_id=Boston&count=20&fields=name,tag_labels,coordinates&annotate=persona:budget",
     {
       headers: {
-        "X-Triposo-Account": "TNLT0JW7",
-        "X-Triposo-Token": "t0jw7n30yhgebkre1hisqd696bhfquhx"
+        "X-Triposo-Account": process.env.TRIPOSO_ACCOUNT,
+        "X-Triposo-Token": process.env.TRIPOSO_TOKEN
       }
     }
   )

@@ -34,6 +34,20 @@ const seed = () => {
           userId: userJames.id
         });
       })
+      .then(() => {
+        console.log(process.env.TRIPOSO_ACCOUNT)
+        return axios.get(
+
+          // triposoUrl,
+          "https://www.triposo.com/api/20190906/poi.json?tag_labels=food|museums|poitype-Museum_district|subtype-Natural_history_museums&location_id=Boston&count=20&fields=name,tag_labels,coordinates&annotate=persona:budget",
+          {
+            headers: {
+              "X-Triposo-Account": process.env.TRIPOSO_ACCOUNT,
+              "X-Triposo-Token": process.env.TRIPOSO_TOKEN
+            }
+          }
+        )
+      }).then(triposoResponse => console.log(triposoResponse.data.results))
   });
 };
 module.exports = seed;
