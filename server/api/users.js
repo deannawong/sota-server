@@ -6,7 +6,7 @@ router.get('/', (req, res, next) => {
     include: [
       {
         model: Itinerary,
-        // include: [{ model: ActivityInstance, include: [{ model: Activity }] }]
+        include: [{ model: ActivityInstance }]
       },
     ],
   })
