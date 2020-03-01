@@ -8,11 +8,7 @@ const volleyball = require('volleyball');
 const moment = require('moment');
 
 
-if (process.env.NODE_ENV !== 'production') {
-  require('dotenv').config()
-} else {
-  require('dotenv').load();
-};
+if (process.env.NODE_ENV !== 'production') require('dotenv').config()
 
 //initialize express
 const app = express();
