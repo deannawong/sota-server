@@ -156,8 +156,16 @@ router.get('/me', cors(corsOptions), (req, res, next) => {
     next();
   }
   if (req.user) {
-    console.log('found user', req.user);
-    return res.send(req.user);
+    const { id, email, firstName, lastName, city } = req.user;
+    const user = {
+      id,
+      firstName,
+      lastName,
+      email,
+      city,
+    };
+    console.log('user: ', user);
+    return res.send(user);
   }
   res.sendStatus(401);
   console.log('no user found');
