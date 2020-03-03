@@ -10,7 +10,7 @@ const {
   TIME,
   ENUM,
   DATE,
-  FLOAT
+  FLOAT, ARRAY
 } = Sequelize;
 
 const ActivityInstance = db.define("activityInstance", {
@@ -31,8 +31,8 @@ const ActivityInstance = db.define("activityInstance", {
     type: FLOAT,
     allowNull: false
   },
-  type: {
-    type: STRING
+  types: {
+    type: ARRAY(STRING)
   },
   startTime: {
     type: TIME
@@ -42,6 +42,12 @@ const ActivityInstance = db.define("activityInstance", {
   },
   date: {
     type: DATE
+  },
+  images: {
+    type: ARRAY(STRING)
+  },
+  distance: {
+    type: FLOAT // This is a distance value from the startCoords on the intinerary
   },
   duration: {
     type: DECIMAL(10, 2) // I think the best way to calculate duration is in quarter hours
