@@ -58,12 +58,18 @@ router.post('/login', cors(corsOptions), (req, res, next) => {
           },
         }
       );
-
+      const { email, firstName, lastName, city } = userOrNull;
+      const user = {
+        firstName,
+        lastName,
+        city,
+        email,
+      };
       res.status(200).json({
         success: true,
         message: 'Authentication successful!',
         token: token,
-        user: userOrNull,
+        user,
       });
     })
     .catch(e => {
@@ -85,12 +91,19 @@ router.post('/signup', (req, res, next) => {
       if (!userOrNull) return res.status(500).send('error creating user');
 
       req.headers.authorization = newUser.token;
+      const { email, firstName, lastName, city } = userOrNull;
+      const user = {
+        firstName,
+        lastName,
+        city,
+        email,
+      };
       req.user = userOrNull;
       res.status(201).json({
         success: true,
         message: 'User created and authentication successful!',
         token: newUser.token,
-        user: userOrNull,
+        user,
       });
     })
     .catch(e => {
