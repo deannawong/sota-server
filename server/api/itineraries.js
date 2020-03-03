@@ -84,7 +84,7 @@ router.post('/newActivities/:userId', (req, res, next) => {
       // .then(newActivityInstances => res.status(200).send(newActivityInstances))
       .then(newActivityInstances =>
         res.status(200).json({
-          itinerary: newItinerary,
+          newItinerary,
           activityInstances: newActivityInstances,
         })
       )
