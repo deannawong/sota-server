@@ -74,4 +74,4 @@ const fetchTriposoData = ({
     });
 };
 
-module.export = { fetchTriposoData };
+module.exports = { fetchTriposoData };
