@@ -59,7 +59,6 @@ const seed = () => {
                 locationLat: coordinates.latitude,
                 locationLong: coordinates.longitude,
                 types: tag_labels,
-                itineraryId: itineraryId,
                 distance: distance,
                 images: imageUrls,
                 itineraryId: jamesItinerary.id
