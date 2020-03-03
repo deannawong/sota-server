@@ -53,7 +53,7 @@ router.post('/newActivities/:userId', (req, res, next) => {
     tags,
   } = req.body;
 
-  console.log('*******req.body*******', req.body);
+  // console.log('*******req.body*******', req.body);
 
   const [startLocationLat, startLocationLong] = startLocation.split(',');
   const [endLocationLat, endLocationLong] = endLocation.split(',');
