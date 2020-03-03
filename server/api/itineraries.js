@@ -1,29 +1,28 @@
-const router = require("express").Router();
-const { Itinerary, ActivityInstance } = require("../db");
-const { fetchTriposoData } = require("./utils")
+const router = require('express').Router();
+const { Itinerary, ActivityInstance } = require('../db');
+const { fetchTriposoData } = require('./utils');
 
-
-router.get("/", (req, res, next) => {
+router.get('/', (req, res, next) => {
   Itinerary.findAll()
     .then(allItineraries => {
       if (allItineraries.length) {
         res.status(200).send(allItineraries);
       } else {
-        res.status(404).send("No itineraries found!");
+        res.status(404).send('No itineraries found!');
       }
     })
     .catch(err => next(err));
 });
 
-router.post("/", (req, res, next) => {
+router.post('/', (req, res, next) => {
   Itinerary.create(req.body)
     .then(newItinerary => res.status(200).send(newItinerary))
     .catch(err => {
-      console.err("Error with creating new itinerary.");
+      console.err('Error with creating new itinerary.');
       next(err);
-    })
-})
-router.put("/:id", (req, res, next) => {
+    });
+});
+router.put('/:id', (req, res, next) => {
   const { id } = req.params;
   Itinerary.findByPk(id)
     .then(foundOrNull => {
@@ -33,32 +32,65 @@ router.put("/:id", (req, res, next) => {
         return foundOrNull.update(req.body);
       }
     })
-    .then(updatedItinerary =>
-      res.status(201).send(updatedItinerary)
-    )
+    .then(updatedItinerary => res.status(201).send(updatedItinerary))
     .catch(err => {
-      console.error("Could not update Itinerary.");
+      console.error('Could not update Itinerary.');
       next(err);
     });
 });
 
-router.post("/newActivities/:userId", (req, res, next) => {
-  const { userId } = req.params
-  const { name, date, startCoords, endCoords, startTime, endTime, locationName, budget, tags } = req.body
+router.post('/newActivities/:userId', (req, res, next) => {
+  const { userId } = req.params;
+  const {
+    name,
+    date,
+    startLocation,
+    endLocation,
+    startTime,
+    endTime,
+    locationName,
+    budget,
+    tags,
+  } = req.body;
 
-  const [startLocationLat, startLocationLong] = startCoords.split(",");
-  const [endLocationLat, endLocationLong] = endCoords.split(",");
+  const [startLocationLat, startLocationLong] = startLocation.split(',');
+  const [endLocationLat, endLocationLong] = endLocation.split(',');
 
-  return Itinerary.create({ name, date, startLocationLat, startLocationLong, endLocationLat, endLocationLong, startTime, endTime, userId })
+  return Itinerary.create({
+    name,
+    date,
+    startLocationLat,
+    startLocationLong,
+    endLocationLat,
+    endLocationLong,
+    startTime,
+    endTime,
+    userId,
+  })
     .then(newItinerary => {
-      const urlObj = { locationName, budget, startCoords, tags, itineraryId: newItinerary.id };
+      console.log(
+        '*******CREATED ITINERARY BEFORE TRIPOSO********',
+        newItinerary
+      );
+      const urlObj = {
+        locationName,
+        budget,
+        startLocation,
+        tags,
+        itineraryId: newItinerary.id,
+      };
       return fetchTriposoData(urlObj);
-    }).then(processedResults => ActivityInstance.bulkCreate(processedResults))
+    })
+    .then(processedResults => {
+      console.log('********RESPONSE FROM TRIPOSO*******', processedResults);
+      return ActivityInstance.bulkCreate(processedResults);
+    })
     .then(newActivityInstances => res.status(200).send(newActivityInstances))
     .catch(err => {
-      console.error("Error with creating activity instances with triposo");
+      console.log('Error with creating activity instances with triposo');
+      console.error(err);
       next(err);
-    })
-})
+    });
+});
 
 module.exports = router;
