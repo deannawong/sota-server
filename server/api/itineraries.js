@@ -53,8 +53,13 @@ router.post('/newActivities/:userId', (req, res, next) => {
     tags,
   } = req.body;
 
+  console.log('*******req.body*******', req.body);
+
   const [startLocationLat, startLocationLong] = startLocation.split(',');
   const [endLocationLat, endLocationLong] = endLocation.split(',');
+
+  console.log('******START LOCATION LAT********', startLocationLat);
+  console.log('******START LOCATION LONG********', startLocationLong);
 
   return Itinerary.create({
     name,
