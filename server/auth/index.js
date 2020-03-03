@@ -58,8 +58,9 @@ router.post('/login', cors(corsOptions), (req, res, next) => {
           },
         }
       );
-      const { email, firstName, lastName, city } = userOrNull;
+      const { id, email, firstName, lastName, city } = userOrNull;
       const user = {
+        id,
         firstName,
         lastName,
         city,
@@ -91,8 +92,9 @@ router.post('/signup', (req, res, next) => {
       if (!userOrNull) return res.status(500).send('error creating user');
 
       req.headers.authorization = newUser.token;
-      const { email, firstName, lastName, city } = userOrNull;
+      const { id, email, firstName, lastName, city } = userOrNull;
       const user = {
+        id,
         firstName,
         lastName,
         city,
