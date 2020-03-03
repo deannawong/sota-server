@@ -1,24 +1,56 @@
-// https://www.triposo.com/api/20190906/poi.json?tag_labels=food|museums|poitype-Museum_district|subtype-Natural_history_museums&location_id=Boston&count=20&fields=name,tag_labels,coordinates&annotate=persona:budget
+const axios = require("axios");
 
-//location_id "Istanbul","New_York_City","Bangkok","Paris","London","Dubai","Kuala_Lumpur","Singapore","Tokyo","Seoul"
+const fetchTriposoData = ({ tags, locationName, budget, startCoords, itineraryId }) => {
+    const count = Math.round(20 / tags.length);
+    const urls = tags.map(tag => {
+        const tagStr = `tag_labels=${tag}`
+        const locationStr = `location_id=${locationName}`
+        const countStr = `count=${count}`
+        const personaStr = `annotate=persona:${budget}`
+        const coordinateStr = `annotate=distance:${startCoords}`
 
-//tag_labels=visas|art|character-Kid_friendly|food|poitype-Cafe|nightlife|exploringnature|hiking|showstheatresandmusic|poitype-Interesting_neighbourhood|poitype-Shopping_district|sightseeing|topattractions
+        return `https://www.triposo.com/api/20190906/poi.json?${tagStr}&${locationStr}&${countStr}&fields=images,name,coordinates,tag_labels&${coordinateStr}&${personaStr}`
+    })
 
-//budget, mid_range,splurge
+    return Promise.all(urls.map(url => {
+        return axios.get(url, {
+            headers: {
+                "X-Triposo-Account": process.env.TRIPOSO_ACCOUNT,
+                "X-Triposo-Token": process.env.TRIPOSO_TOKEN
+            }
+        })
+    }
+    )).then(triposoResponses => {
+        const processedResults = [];
 
-// fields=name,tag_labels,coordinates
-//&annotate=distance:40.70505453503665,-74.00931658426346&annotate=persona:budget
+        triposoResponses.forEach(response => {
+            const { results } = response.data;
 
-const urlGenerator = ({ tags, location, budget, coordinates }) => {
-    //takes object, returns string // default top attractions
+            if (results.length) {
+                results.forEach(activity => {
+                    const { images, name, coordinates, distance, tag_labels } = activity;
 
+                    const imageUrls = images.length ? images.map(imageObj => imageObj.source_url) : [];
 
+                    processedResults.push({
+                        name: name,
+                        locationLat: coordinates.latitude,
+                        locationLong: coordinates.longitude,
+                        types: tag_labels,
+                        itineraryId: itineraryId,
+                        distance: distance,
+                        images: imageUrls,
+                        itineraryId
+                    })
+                })
+            }
+        })
+        return processedResults;
+    }).catch(err => {
+        console.error("Issue with fetching from triposo");
+        next(err);
+    })
 
-    const tagsStr = `tag_labels=${tags.join("|")}`
-    const locationStr = `location_id=${location}`
-    const personaStr = `annotate=persona:${budget}`
-
-    return `https://www.triposo.com/api/20190906/poi.json?`
 }
 
-module.export = { urlGenerator }
+module.export = { fetchTriposoData }

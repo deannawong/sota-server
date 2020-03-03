@@ -1,5 +1,7 @@
 const router = require("express").Router();
-const { Itinerary } = require("../db");
+const { Itinerary, ActivityInstance } = require("../db");
+const { fetchTriposoData } = require("./utils")
+
 
 router.get("/", (req, res, next) => {
   Itinerary.findAll()
@@ -39,5 +41,24 @@ router.put("/:id", (req, res, next) => {
       next(err);
     });
 });
+
+router.post("/newActivities/:userId", (req, res, next) => {
+  const { userId } = req.params
+  const { name, date, startCoords, endCoords, startTime, endTime, locationName, budget, tags } = req.body
+
+  const [startLocationLat, startLocationLong] = startCoords.split(",");
+  const [endLocationLat, endLocationLong] = endCoords.split(",");
+
+  return Itinerary.create({ name, date, startLocationLat, startLocationLong, endLocationLat, endLocationLong, startTime, endTime, userId })
+    .then(newItinerary => {
+      const urlObj = { locationName, budget, startCoords, tags, itineraryId: newItinerary.id };
+      return fetchTriposoData(urlObj);
+    }).then(processedResults => ActivityInstance.bulkCreate(processedResults))
+    .then(newActivityInstances => res.status(200).send(newActivityInstances))
+    .catch(err => {
+      console.error("Error with creating activity instances with triposo");
+      next(err);
+    })
+})
 
 module.exports = router;
