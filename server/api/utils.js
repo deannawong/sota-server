@@ -18,6 +18,8 @@ const fetchTriposoData = ({
     return `https://www.triposo.com/api/20190906/poi.json?${tagStr}&${locationStr}&${countStr}&fields=images,name,coordinates,tag_labels&${coordinateStr}&${personaStr}`;
   });
 
+  console.log('****URLS*****', urls);
+
   return Promise.all(
     urls.map(url => {
       return axios.get(url, {
@@ -29,6 +31,7 @@ const fetchTriposoData = ({
     })
   )
     .then(triposoResponses => {
+      console.log('********Triposo Response*******', triposoResponses);
       const processedResults = [];
 
       triposoResponses.forEach(response => {
@@ -61,10 +64,12 @@ const fetchTriposoData = ({
           });
         }
       });
+      console.log('*******PROCESSED RESULTS********', processedResults);
       return processedResults;
     })
     .catch(err => {
-      console.error('Issue with fetching from triposo');
+      console.log('Issue with fetching from triposo');
+      console.error(err);
       next(err);
     });
 };

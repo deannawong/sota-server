@@ -164,7 +164,7 @@ router.get('/me', cors(corsOptions), (req, res, next) => {
       email,
       city,
     };
-    console.log('user: ', user);
+
     return res.send(user);
   }
   res.sendStatus(401);
