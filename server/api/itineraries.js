@@ -53,49 +53,47 @@ router.post('/newActivities/:userId', (req, res, next) => {
     tags,
   } = req.body;
 
-  // console.log('*******req.body*******', req.body);
-
   const [startLocationLat, startLocationLong] = startLocation.split(',');
   const [endLocationLat, endLocationLong] = endLocation.split(',');
 
-  // console.log('******START LOCATION LAT********', startLocationLat);
-  // console.log('******START LOCATION LONG********', startLocationLong);
-
-  return Itinerary.create({
-    name,
-    date,
-    startLocationLat,
-    startLocationLong,
-    endLocationLat,
-    endLocationLong,
-    startTime,
-    endTime,
-    userId,
-  })
-    .then(newItinerary => {
-      console.log(
-        '*******CREATED ITINERARY BEFORE TRIPOSO********',
-        newItinerary
-      );
-      const urlObj = {
-        locationName,
-        budget,
-        startLocation,
-        tags,
-        itineraryId: newItinerary.id,
-      };
-      return fetchTriposoData(urlObj);
+  return (
+    Itinerary.create({
+      name,
+      date,
+      startLocationLat,
+      startLocationLong,
+      endLocationLat,
+      endLocationLong,
+      startTime,
+      endTime,
+      userId,
     })
-    .then(processedResults => {
-      console.log('********RESPONSE FROM TRIPOSO*******', processedResults);
-      return ActivityInstance.bulkCreate(processedResults);
-    })
-    .then(newActivityInstances => res.status(200).send(newActivityInstances))
-    .catch(err => {
-      console.log('Error with creating activity instances with triposo');
-      console.error(err);
-      next(err);
-    });
+      .then(newItinerary => {
+        const urlObj = {
+          locationName,
+          budget,
+          startLocation,
+          tags,
+          itineraryId: newItinerary.id,
+        };
+        return fetchTriposoData(urlObj);
+      })
+      .then(processedResults => {
+        return ActivityInstance.bulkCreate(processedResults);
+      })
+      // .then(newActivityInstances => res.status(200).send(newActivityInstances))
+      .then(newActivityInstances =>
+        res.status(200).json({
+          itinerary: newItinerary,
+          activityInstances: newActivityInstances,
+        })
+      )
+      .catch(err => {
+        console.log('Error with creating activity instances with triposo');
+        console.error(err);
+        next(err);
+      })
+  );
 });
 
 module.exports = router;
