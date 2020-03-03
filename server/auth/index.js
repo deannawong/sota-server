@@ -72,6 +72,7 @@ router.post('/login', cors(corsOptions), (req, res, next) => {
         token: token,
         user,
       });
+      req.user = userOrNull;
     })
     .catch(e => {
       console.log('error signing in');
@@ -155,7 +156,7 @@ router.get('/me', cors(corsOptions), (req, res, next) => {
     next();
   }
   if (req.user) {
-    console.log('found user');
+    console.log('found user', req.user);
     return res.send(req.user);
   }
   res.sendStatus(401);
