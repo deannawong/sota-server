@@ -82,12 +82,18 @@ router.post('/newActivities/:userId', (req, res, next) => {
         return ActivityInstance.bulkCreate(processedResults);
       })
       // .then(newActivityInstances => res.status(200).send(newActivityInstances))
-      .then(newActivityInstances =>
-        res.status(200).json({
-          newItinerary,
-          activityInstances: newActivityInstances,
-        })
-      )
+      .then(newActivityInstances => {
+        Itinerary.findOne({
+          where: {
+            id: newActivityInstances[0].itineraryId,
+          },
+        }).then(itineraryOrNull => {
+          res.status(200).json({
+            newItinerary: itineraryOrNull,
+            activityInstances: newActivityInstances,
+          });
+        });
+      })
       .catch(err => {
         console.log('Error with creating activity instances with triposo');
         console.error(err);
