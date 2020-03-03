@@ -70,7 +70,6 @@ const fetchTriposoData = ({
     .catch(err => {
       console.log('Issue with fetching from triposo');
       console.error(err);
-      next(err);
     });
 };
 
