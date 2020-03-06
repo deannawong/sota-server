@@ -85,26 +85,26 @@ router.post('/newActivities/:userId', (req, res, next) => {
       .then(newActivityInstances => {
 
         const { scheduledActivities, otherOptions } = processActivityInstances(newActivityInstances, startTime, endTime)
-
-        Promise.all(scheduledActivities.map(activity => ActivityInstance.findByPk(activity.id).then(foundActivity => foundActivity.update(activity))))
-          .then(() =>
-            Itinerary.findOne({
-              where: {
-                id: newActivityInstances[0].itineraryId,
-              },
-            })).then(itineraryOrNull => {
-              res.status(200).json({
-                newItinerary: itineraryOrNull,
-                scheduledActivities,
-                otherOptions
-              });
-            })
+        console.log(scheduledActivities)
+        Promise.all(scheduledActivities.map(activity => { ActivityInstance.findByPk(activity.id).then(foundActivity => foundActivity.update(activity)))})
+      .then(() =>
+        Itinerary.findOne({
+          where: {
+            id: newActivityInstances[0].itineraryId,
+          },
+        })).then(itineraryOrNull => {
+          res.status(200).json({
+            newItinerary: itineraryOrNull,
+            scheduledActivities,
+            otherOptions
+          });
+        })
       })
-      .catch(err => {
-        console.log('Error with creating activity instances with triposo');
-        console.error(err);
-        next(err);
-      })
+  .catch(err => {
+    console.log('Error with creating activity instances with triposo');
+    console.error(err);
+    next(err);
+  })
   );
 });
 

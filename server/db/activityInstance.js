@@ -52,7 +52,6 @@ const ActivityInstance = db.define("activityInstance", {
   duration: {
     type: DECIMAL(10, 2) // I think the best way to calculate duration is in quarter hours
   },
-
   distanceToNext: {
     type: FLOAT
   },
