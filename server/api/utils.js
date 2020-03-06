@@ -140,7 +140,7 @@ const processActivityInstances = (pendingActivities, startTime, endTime) => {
       scheduledActivities.push(closestActivity)
       remainingTime -= closestActivityTime
     } else {
-      return { scheduledActivities, otherOptions }
+      return [scheduledActivities, otherOptions]
     }
     otherOptions = assignDistanceTo([closestActivity.locationLat, closestActivity.locationLong], otherOptions.slice(1));
     otherOptions.sort(compareByDistanceToNext);
