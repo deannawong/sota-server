@@ -84,7 +84,7 @@ router.post('/newActivities/:userId', (req, res, next) => {
       })
       .then(newActivityInstances => {
 
-        const { scheduledActivities, otherOptions } = processedActivtyInstances(newActivityInstances, startTime, endTime)
+        const { scheduledActivities, otherOptions } = processActivityInstances(newActivityInstances, startTime, endTime)
 
         Promise.all(scheduledActivities.map(activity => ActivityInstance.findByPk(activity.id).update(activity)))
           .then(() =>
