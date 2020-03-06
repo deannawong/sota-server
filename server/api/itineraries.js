@@ -88,14 +88,12 @@ router.post('/newActivities/:userId', (req, res, next) => {
       .then(newActivityInstances => {
         const [scheduledActivities, otherOptions] = newActivityInstances;
 
-        console.log("DESTRUCTURED ARRAY AFTER BULK CREATE", newActivityInstances)
-
         Itinerary.findOne({
           where: {
             id: scheduledActivities[0].itineraryId,
           },
         }).then(itineraryOrNull => {
-          console.log("scheduled?", scheduledActivities)
+
           res.status(200).json({
             newItinerary: itineraryOrNull,
             scheduledActivities,
