@@ -137,6 +137,7 @@ const processActivityInstances = (pendingActivities, startTime, endTime) => {
     let closestActivityTime = activityTime(otherOptions[0], remainingTime);
 
     if (closestActivityTime) {
+      closestActivity.scheduled = true;
       scheduledActivities.push(closestActivity)
       remainingTime -= closestActivityTime
     } else {

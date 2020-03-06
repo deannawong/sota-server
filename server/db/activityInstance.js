@@ -56,7 +56,8 @@ const ActivityInstance = db.define("activityInstance", {
     type: FLOAT
   },
   scheduled: {
-    type: BOOLEAN
+    type: BOOLEAN,
+    defaultValue: false
   },
   // rating: {
   //   type: ENUM(1, 2, 3, 4, 5)

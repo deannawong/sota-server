@@ -85,10 +85,9 @@ router.post('/newActivities/:userId', (req, res, next) => {
 
         return Promise.all([ActivityInstance.bulkCreate(scheduledActivities), ActivityInstance.bulkCreate(otherOptions)])
       })
-
       .then(newActivityInstances => {
         const [scheduledActivities, otherOptions] = newActivityInstances;
-
+        console.log(newActivityInstances)
         Itinerary.findOne({
           where: {
             id: scheduledActivities[0].itineraryId,
