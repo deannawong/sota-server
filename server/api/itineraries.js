@@ -79,26 +79,27 @@ router.post('/newActivities/:userId', (req, res, next) => {
         };
         return fetchTriposoData(urlObj);
       })
-      .then(processedResults => {
-        return ActivityInstance.bulkCreate(processedResults);
-      })
-      .then(newActivityInstances => {
+      .then(triposoObjs => {
+        const [scheduledActivities, otherOptions] =
+          processActivityInstances(triposoObjs, startTime, endTime)
 
-        const { scheduledActivities, otherOptions } = processActivityInstances(newActivityInstances, startTime, endTime)
-        console.log(scheduledActivities)
-        Promise.all(scheduledActivities.map(activity => activity.update(activity)))
-          .then(() =>
-            Itinerary.findOne({
-              where: {
-                id: newActivityInstances[0].itineraryId,
-              },
-            })).then(itineraryOrNull => {
-              res.status(200).json({
-                newItinerary: itineraryOrNull,
-                scheduledActivities,
-                otherOptions
-              });
-            })
+        return Promise.all([ActivityInstance.bulkCreate(scheduledActivities), ActivityInstance.bulkCreate(otherOptions)])
+      })
+
+      .then(newActivityInstances => {
+        const [scheduledActivities, otherOptions] = newActivityInstances;
+
+        Itinerary.findOne({
+          where: {
+            id: scheduledActivities[0].itineraryId,
+          },
+        }).then(itineraryOrNull => {
+          res.status(200).json({
+            newItinerary: itineraryOrNull,
+            scheduledActivities,
+            otherOptions
+          });
+        })
       })
       .catch(err => {
         console.log('Error with creating activity instances with triposo');
