@@ -1,6 +1,7 @@
 const router = require('express').Router();
 const { Itinerary, ActivityInstance } = require('../db');
-const { fetchTriposoData } = require('./utils');
+const { fetchTriposoData, processActivityInstances } = require('./utils');
+
 
 router.get('/', (req, res, next) => {
   Itinerary.findAll()
@@ -81,18 +82,23 @@ router.post('/newActivities/:userId', (req, res, next) => {
       .then(processedResults => {
         return ActivityInstance.bulkCreate(processedResults);
       })
-      // .then(newActivityInstances => res.status(200).send(newActivityInstances))
       .then(newActivityInstances => {
-        Itinerary.findOne({
-          where: {
-            id: newActivityInstances[0].itineraryId,
-          },
-        }).then(itineraryOrNull => {
-          res.status(200).json({
-            newItinerary: itineraryOrNull,
-            activityInstances: newActivityInstances,
-          });
-        });
+
+        const { scheduledActivities, otherOptions } = processedActivtyInstances(newActivityInstances, startTime, endTime)
+
+        Promise.all(scheduledActivities.map(activity => ActivityInstance.findByPk(activity.id).update(activity)))
+          .then(() =>
+            Itinerary.findOne({
+              where: {
+                id: newActivityInstances[0].itineraryId,
+              },
+            })).then(itineraryOrNull => {
+              res.status(200).json({
+                newItinerary: itineraryOrNull,
+                scheduledActivities,
+                otherOptions
+              });
+            });
       })
       .catch(err => {
         console.log('Error with creating activity instances with triposo');

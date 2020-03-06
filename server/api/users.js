@@ -20,6 +20,22 @@ router.get('/', (req, res, next) => {
     .catch(err => next(err));
 });
 
+router.get('/:id', (req, res, next) => {
+  const { id } = req.params
+  User.findOne({
+    where: { id }, include: [{
+      model: Itinerary,
+      include: [{ model: ActivityInstance }]
+    }]
+  })
+    .then(userOrNull => {
+      if (userOrNull) {
+        res.status(200).send(userOrNull)
+      }
+      res.status(404).send("User not found.")
+    }).catch(err => next(err));
+})
+
 router.post('/', (req, res, next) => {
   User.create(req.body)
     .then(newUser => res.status(200).send(newUser))

@@ -10,7 +10,7 @@ const {
   TIME,
   ENUM,
   DATE,
-  FLOAT, ARRAY
+  FLOAT, ARRAY, BOOLEAN
 } = Sequelize;
 
 const ActivityInstance = db.define("activityInstance", {
@@ -51,6 +51,9 @@ const ActivityInstance = db.define("activityInstance", {
   },
   duration: {
     type: DECIMAL(10, 2) // I think the best way to calculate duration is in quarter hours
+  },
+  scheduled: {
+    type: BOOLEAN
   }
   // rating: {
   //   type: ENUM(1, 2, 3, 4, 5)
