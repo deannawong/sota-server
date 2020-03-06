@@ -86,7 +86,7 @@ router.post('/newActivities/:userId', (req, res, next) => {
 
         const { scheduledActivities, otherOptions } = processActivityInstances(newActivityInstances, startTime, endTime)
 
-        Promise.all(scheduledActivities.map(activity => ActivityInstance.findByPk(activity.id).update(activity)))
+        Promise.all(scheduledActivities.map(activity => ActivityInstance.findByPk(activity.id).then(foundActivity => foundActivity.update(activity)))
           .then(() =>
             Itinerary.findOne({
               where: {
