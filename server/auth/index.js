@@ -63,7 +63,7 @@ router.post('/login', cors(corsOptions), (req, res, next) => {
         }
       );
       const { id, email, firstName, lastName, city, itineraries } = userOrNull;
-      console.log("USER OR NULL", userOrNull)
+
       const user = {
         id,
         firstName,
@@ -72,7 +72,7 @@ router.post('/login', cors(corsOptions), (req, res, next) => {
         email,
         itineraries
       };
-      console.log("USER OBJECT", user)
+
       res.status(200).json({
         success: true,
         message: 'Authentication successful!',
@@ -162,6 +162,7 @@ router.get('/me', cors(corsOptions), (req, res, next) => {
     res.sendStatus(401);
     next();
   }
+  console.log("req.user", req.user)
   if (req.user) {
     return User.findOne({ where: token, include: [{ model: Itinerary }] })
       .then(userOrNull => {
