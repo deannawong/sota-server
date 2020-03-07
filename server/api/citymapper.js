@@ -48,7 +48,11 @@ router.post('/', (req, res, next) => {
       locationLong,
     });
 
-    const firstTransit = (await axios.get(`https://developer.citymapper.com/api/1/traveltime/?startcoord=${startLocationLat}%2C${startLocationLong}&endcoord=${locationLat}%2C${locationLong}&time=${dateToSend}&time_type=arrival&key=${cityMapperAPIKey}`)).data;
+    const firstTransit = await axios.get(`https://developer.citymapper.com/api/1/traveltime/?startcoord=${startLocationLat}%2C${startLocationLong}&endcoord=${locationLat}%2C${locationLong}&time=${dateToSend}&time_type=arrival&key=${cityMapperAPIKey}`);
+    const data = firstTransit.data
+    console.log('data: ', data)
+
+
     console.log('first transit: ', firstTransit);
     const actsToSend = [firstTransit];
 
