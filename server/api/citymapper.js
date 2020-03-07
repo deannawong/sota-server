@@ -1,4 +1,4 @@
-const router = require("express").Router();
+const router = require('express').Router();
 const cors = require('cors');
 const axios = require('axios');
 
@@ -22,8 +22,7 @@ const corsOptions = {
 
 router.options('*', cors(corsOptions));
 
-router.post('/', (req, res, next) => {
-
+router.post('/', async (req, res, next) => {
   try {
     const {
       date,
@@ -48,54 +47,50 @@ router.post('/', (req, res, next) => {
       locationLong,
     });
 
-    const firstTransit = await axios.get(`https://developer.citymapper.com/api/1/traveltime/?startcoord=${startLocationLat}%2C${startLocationLong}&endcoord=${locationLat}%2C${locationLong}&time=${dateToSend}&time_type=arrival&key=${cityMapperAPIKey}`);
-    const data = firstTransit.data
-    console.log('data: ', data)
-
+    const firstTransit = (
+      await axios.get(
+        `https://developer.citymapper.com/api/1/traveltime/?startcoord=${startLocationLat}%2C${startLocationLong}&endcoord=${locationLat}%2C${locationLong}&time=${dateToSend}&time_type=arrival&key=${cityMapperAPIKey}`
+      )
+    ).data;
 
     console.log('first transit: ', firstTransit);
     const actsToSend = [firstTransit];
 
-      scheduledActivities.forEach(
-      async (activity, idx) => {
-        const { locationLat, locationLong, endTime } = activity;
-        const dateOfTrip = date.split('T')[0];
-        const firstDate = new Date(`${dateofTrip} ${endTime}`).toISOString();
-        const dateToSend = firstDate.split(':').join('%3');
-        let nextLat;
-        let nextLng;
-        if (idx < scheduledActivities.length - 1) {
-          const nextActivity = scheduledActivities[idx + 1];
-          nextLat = nextActivity.locationLat;
-          nextLng = nextActivity.locationLong;
-        } else {
-          nextLat = endLocationLat;
-          nextLng = endLocationLong;
-        }
-        const transitObj = (
-          await axios.get(
-            `https://developer.citymapper.com/api/1/traveltime/?startcoord=${locationLat}%2C${locationLong}&endcoord=${nextLat}%2C${nextLng}&time=${dateToSend}&time_type=arrival&key=${cityMapperAPIKey}`
-          )
-        ).data;
-
-        // without time
-        // const transitObj = (
-        //   await axios.get(
-        //     `https://developer.citymapper.com/api/1/traveltime/?startcoord=${locationLat}%2C${locationLong}&endcoord=${nextLat}%2C${nextLng}&time_type=arrival&key=${cityMapperAPIKey}`
-        //   )
-        // ).data;
-        transitObj.types = 'transit';
-        actsToSend.push(activity);
-        actsToSend.push(transitObj);
+    scheduledActivities.forEach(async (activity, idx) => {
+      const { locationLat, locationLong, endTime } = activity;
+      const dateOfTrip = date.split('T')[0];
+      const firstDate = new Date(`${dateofTrip} ${endTime}`).toISOString();
+      const dateToSend = firstDate.split(':').join('%3');
+      let nextLat;
+      let nextLng;
+      if (idx < scheduledActivities.length - 1) {
+        const nextActivity = scheduledActivities[idx + 1];
+        nextLat = nextActivity.locationLat;
+        nextLng = nextActivity.locationLong;
+      } else {
+        nextLat = endLocationLat;
+        nextLng = endLocationLong;
       }
-    );
+      const transitObj = (
+        await axios.get(
+          `https://developer.citymapper.com/api/1/traveltime/?startcoord=${locationLat}%2C${locationLong}&endcoord=${nextLat}%2C${nextLng}&time=${dateToSend}&time_type=arrival&key=${cityMapperAPIKey}`
+        )
+      ).data;
+
+      // without time
+      // const transitObj = (
+      //   await axios.get(
+      //     `https://developer.citymapper.com/api/1/traveltime/?startcoord=${locationLat}%2C${locationLong}&endcoord=${nextLat}%2C${nextLng}&time_type=arrival&key=${cityMapperAPIKey}`
+      //   )
+      // ).data;
+      transitObj.types = 'transit';
+      actsToSend.push(activity);
+      actsToSend.push(transitObj);
+    });
 
     res.status(200).send(actsToSend);
-  }
-
-  catch(e) {
+  } catch (e) {
     console.log('error posting on city mapper route');
     console.error(e);
   }
-
-})
+});
