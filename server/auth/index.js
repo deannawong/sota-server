@@ -36,7 +36,12 @@ router.post('/login', cors(corsOptions), (req, res, next) => {
   User.findOne({
     where: {
       email: req.body.email,
-    },
+    }, include: [
+      {
+        model: Itinerary,
+        include: [{ model: ActivityInstance }]
+      },
+    ]
   })
     .then(userOrNull => {
       if (userOrNull && !userOrNull.isPasswordValid(req.body.password)) {
