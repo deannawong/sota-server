@@ -49,7 +49,7 @@ router.post('/', async (req, res, next) => {
 
     const firstTransit = (
       await axios.get(
-        `https://developer.citymapper.com/api/1/traveltime/?startcoord=${startLocationLat}%2C${startLocationLong}&endcoord=${locationLat}%2C${locationLong}&time=${dateToSend}&time_type=arrival&key=${cityMapperAPIKey}`
+        `https://developer.citymapper.com/api/1/traveltime/?startcoord=${startLocationLat}%2C${startLocationLong}&endcoord=${locationLat}%2C${locationLong}&time=${dateToSend}&time_type=arrival&key=${process.env.CITY_MAPPER_API}`
       )
     ).data;
 
@@ -73,7 +73,7 @@ router.post('/', async (req, res, next) => {
       }
       const transitObj = (
         await axios.get(
-          `https://developer.citymapper.com/api/1/traveltime/?startcoord=${locationLat}%2C${locationLong}&endcoord=${nextLat}%2C${nextLng}&time=${dateToSend}&time_type=arrival&key=${cityMapperAPIKey}`
+          `https://developer.citymapper.com/api/1/traveltime/?startcoord=${locationLat}%2C${locationLong}&endcoord=${nextLat}%2C${nextLng}&time=${dateToSend}&time_type=arrival&key=${process.env.CITY_MAPPER_API}`
         )
       ).data;
 
