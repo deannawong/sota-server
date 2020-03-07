@@ -139,7 +139,7 @@ router.post('/', (req, res, next) => {
     ).toISOString();
     const dateToSend = firstDate.split(':').join('%3');
 
-    const actsToSend = [];
+    const newActs = [];
     axios
       .get(
         `https://developer.citymapper.com/api/1/traveltime/?startcoord=${startLocationLat}%2C${startLocationLong}&endcoord=${locationLat}%2C${locationLong}&time=${dateToSend}&time_type=arrival&key=${process.env.CITY_MAPPER_API}`
@@ -147,14 +147,11 @@ router.post('/', (req, res, next) => {
       .then(res => {
         const firstTransit = res.data;
         firstTransit.types = 'transit';
-        actsToSend.push(firstTransit);
+        newActs.push(firstTransit);
       })
       .then(() => {
-        scheduledActivities.forEach(async (activity, idx) => {
+        const actsToSend = scheduledActivities.reduce((acc, activity, idx) => {
           const { locationLat, locationLong, endTime } = activity;
-          // console.log('date: ', date);
-          // console.log('date to use: ', dateToUse);
-          // const dateOfTrip = date.split('T')[0];
           const firstDate = new Date(`${dateToUse} ${endTime}`).toISOString();
           const dateToSend = firstDate.split(':').join('%3');
           let nextLat;
@@ -163,65 +160,32 @@ router.post('/', (req, res, next) => {
             const nextActivity = scheduledActivities[idx + 1];
             nextLat = nextActivity.locationLat;
             nextLng = nextActivity.locationLong;
-            const transitObj = (
-              await axios.get(
-                `https://developer.citymapper.com/api/1/traveltime/?startcoord=${locationLat}%2C${locationLong}&endcoord=${nextLat}%2C${nextLng}&time=${dateToSend}&time_type=arrival&key=${process.env.CITY_MAPPER_API}`
-              )
-            ).data;
-
-            console.log('transit object: ', transitObj);
-
-            // without time
-            // const transitObj = (
-            //   await axios.get(
-            //     `https://developer.citymapper.com/api/1/traveltime/?startcoord=${locationLat}%2C${locationLong}&endcoord=${nextLat}%2C${nextLng}&time_type=arrival&key=${cityMapperAPIKey}`
-            //   )
-            // ).data;
-            transitObj.types = 'transit';
-            actsToSend.push(activity);
-            actsToSend.push(transitObj);
           }
-          // else {
-          //   nextLat = endLocationLat;
-          //   nextLng = endLocationLong;
-          // }
-          // const transitObj = (
-          //   await axios.get(
-          //     `https://developer.citymapper.com/api/1/traveltime/?startcoord=${locationLat}%2C${locationLong}&endcoord=${nextLat}%2C${nextLng}&time=${dateToSend}&time_type=arrival&key=${process.env.CITY_MAPPER_API}`
-          //   )
-          // ).data;
+          else {
+            nextLat = endLocationLat;
+            nextLng = endLocationLong;
+          }
+          const transitObj = (
+            await axios.get(
+              `https://developer.citymapper.com/api/1/traveltime/?startcoord=${locationLat}%2C${locationLong}&endcoord=${nextLat}%2C${nextLng}&time=${dateToSend}&time_type=arrival&key=${process.env.CITY_MAPPER_API}`
+            )
+          ).data;
 
           // console.log('transit object: ', transitObj);
 
-          // // without time
-          // // const transitObj = (
-          // //   await axios.get(
-          // //     `https://developer.citymapper.com/api/1/traveltime/?startcoord=${locationLat}%2C${locationLong}&endcoord=${nextLat}%2C${nextLng}&time_type=arrival&key=${cityMapperAPIKey}`
-          // //   )
-          // // ).data;
-          // transitObj.types = 'transit';
-          // actsToSend.push(activity);
-          // actsToSend.push(transitObj);
-        });
-        const activity = scheduledActivities[scheduledActivities.length - 1];
-        const { locationLat, locationLong, endTime } = activity;
-        const firstDate = new Date(`${dateToUse} ${endTime}`).toISOString();
-        const dateToSend = firstDate.split(':').join('%3');
-        const nextLat = endLocationLat;
-        const nextLng = endLocationLong;
-        axios
-          .get(
-            `https://developer.citymapper.com/api/1/traveltime/?startcoord=${locationLat}%2C${locationLong}&endcoord=${nextLat}%2C${nextLng}&time=${dateToSend}&time_type=arrival&key=${process.env.CITY_MAPPER_API}`
-          )
-          .then(res => {
-            const lastTransit = res.data;
-            lastTransit.types = 'transit';
-            actsToSend.push(lastTransit);
-          })
-          .then(() => {
-            console.log('acts to send: ', actsToSend);
-            res.status(200).send(actsToSend);
-          });
+          // without time
+          // const transitObj = (
+          //   await axios.get(
+          //     `https://developer.citymapper.com/api/1/traveltime/?startcoord=${locationLat}%2C${locationLong}&endcoord=${nextLat}%2C${nextLng}&time_type=arrival&key=${cityMapperAPIKey}`
+          //   )
+          // ).data;
+          transitObj.types = 'transit';
+          acc.push(activity);
+          acc.push(transitObj);
+          return acc;
+        }, newActs)
+        console.log('acts to send: ', actsToSend)
+        res.status(200).send(actsToSend);
       })
       .catch(e => {
         console.log('error getting from city mapper');
@@ -234,3 +198,39 @@ router.post('/', (req, res, next) => {
 });
 
 module.exports = router;
+
+
+// scheduledActivities.reduce((acc, activity, idx) => {
+//   const { locationLat, locationLong, endTime } = activity;
+//   const firstDate = new Date(`${dateToUse} ${endTime}`).toISOString();
+//   const dateToSend = firstDate.split(':').join('%3');
+//   let nextLat;
+//   let nextLng;
+//   if (idx < scheduledActivities.length - 1) {
+//     const nextActivity = scheduledActivities[idx + 1];
+//     nextLat = nextActivity.locationLat;
+//     nextLng = nextActivity.locationLong;
+//   }
+//   else {
+//     nextLat = endLocationLat;
+//     nextLng = endLocationLong;
+//   }
+//   const transitObj = (
+//     await axios.get(
+//       `https://developer.citymapper.com/api/1/traveltime/?startcoord=${locationLat}%2C${locationLong}&endcoord=${nextLat}%2C${nextLng}&time=${dateToSend}&time_type=arrival&key=${process.env.CITY_MAPPER_API}`
+//     )
+//   ).data;
+
+//   console.log('transit object: ', transitObj);
+
+//   // without time
+//   // const transitObj = (
+//   //   await axios.get(
+//   //     `https://developer.citymapper.com/api/1/traveltime/?startcoord=${locationLat}%2C${locationLong}&endcoord=${nextLat}%2C${nextLng}&time_type=arrival&key=${cityMapperAPIKey}`
+//   //   )
+//   // ).data;
+//   transitObj.types = 'transit';
+//   acc.push(activity);
+//   acc.push(transitObj);
+//   return acc;
+// }, newActs)
