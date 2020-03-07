@@ -35,6 +35,7 @@ router.post('/', async (req, res, next) => {
 
     const { scheduledActivities } = req.body;
     const { locationLat, locationLong } = scheduledActivities[0];
+    const dateToUse = date.split('T')[0];
     const firstDate = new Date(
       `${date.split('T')[0]} ${startTime}`
     ).toISOString();
@@ -53,13 +54,17 @@ router.post('/', async (req, res, next) => {
       )
     ).data;
 
+    firstTransit.types = 'transit';
+
     console.log('first transit: ', firstTransit);
     const actsToSend = [firstTransit];
 
     scheduledActivities.forEach(async (activity, idx) => {
       const { locationLat, locationLong, endTime } = activity;
-      const dateOfTrip = date.split('T')[0];
-      const firstDate = new Date(`${dateofTrip} ${endTime}`).toISOString();
+      console.log('date: ', date);
+      console.log('date to use: ', dateToUse);
+      // const dateOfTrip = date.split('T')[0];
+      const firstDate = new Date(`${dateToUse} ${endTime}`).toISOString();
       const dateToSend = firstDate.split(':').join('%3');
       let nextLat;
       let nextLng;
