@@ -120,7 +120,7 @@ const corsOptions = {
 
 router.options('*', cors(corsOptions));
 
-router.post('/', async (req, res, next) => {
+router.post('/', (req, res, next) => {
   try {
     const {
       date,
@@ -140,7 +140,7 @@ router.post('/', async (req, res, next) => {
     const dateToSend = firstDate.split(':').join('%3');
 
     const actsToSend = [];
-    await axios
+    axios
       .get(
         `https://developer.citymapper.com/api/1/traveltime/?startcoord=${startLocationLat}%2C${startLocationLong}&endcoord=${locationLat}%2C${locationLong}&time=${dateToSend}&time_type=arrival&key=${process.env.CITY_MAPPER_API}`
       )
