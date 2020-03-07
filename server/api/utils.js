@@ -151,7 +151,9 @@ const processActivityInstances = (pendingActivities, startTime, endTime) => {
         .add(closestActivityTime + 1, 'hour')
         .format('HH:mm');
 
+
       startTime = closestActivity.endTime;
+
 
       scheduledActivities.push(closestActivity);
       remainingTime -= closestActivityTime + 1;
