@@ -163,7 +163,7 @@ router.get('/me', cors(corsOptions), (req, res, next) => {
     next();
   }
   if (req.user) {
-    User.findOne({ where: token, include: [{ model: Itinerary }] })
+    return User.findOne({ where: token, include: [{ model: Itinerary }] })
       .then(userOrNull => {
         if (userOrNull) {
           const { id, email, firstName, lastName, city, itineraries } = userOrNull;
@@ -176,11 +176,8 @@ router.get('/me', cors(corsOptions), (req, res, next) => {
             itineraries
           }
           return res.send(user);
-
         }
-
       })
-
   }
   res.sendStatus(401);
   console.log('no user found');
