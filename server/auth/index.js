@@ -1,6 +1,6 @@
 const router = require('express').Router();
 const moment = require('moment');
-const { User, Session } = require('../db/index');
+const { User, Session, Itinerary } = require('../db/index');
 const cors = require('cors');
 const jwt = require('jsonwebtoken');
 const { checkToken } = require('../middleware');
@@ -36,7 +36,11 @@ router.post('/login', cors(corsOptions), (req, res, next) => {
   User.findOne({
     where: {
       email: req.body.email,
-    },
+    }, include: [
+      {
+        model: Itinerary,
+      },
+    ]
   })
     .then(userOrNull => {
       if (userOrNull && !userOrNull.isPasswordValid(req.body.password)) {
@@ -58,13 +62,14 @@ router.post('/login', cors(corsOptions), (req, res, next) => {
           },
         }
       );
-      const { id, email, firstName, lastName, city } = userOrNull;
+      const { id, email, firstName, lastName, city, itineraries } = userOrNull;
       const user = {
         id,
         firstName,
         lastName,
         city,
         email,
+        itineraries
       };
       res.status(200).json({
         success: true,
@@ -156,13 +161,14 @@ router.get('/me', cors(corsOptions), (req, res, next) => {
     next();
   }
   if (req.user) {
-    const { id, email, firstName, lastName, city } = req.user;
+    const { id, email, firstName, lastName, city, itineraries } = req.user;
     const user = {
       id,
       firstName,
       lastName,
       email,
       city,
+      itineraries
     };
 
     return res.send(user);
