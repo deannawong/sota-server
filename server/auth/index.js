@@ -63,6 +63,7 @@ router.post('/login', cors(corsOptions), (req, res, next) => {
         }
       );
       const { id, email, firstName, lastName, city, itineraries } = userOrNull;
+      console.log("USER OR NULL", userOrNull)
       const user = {
         id,
         firstName,
@@ -71,6 +72,7 @@ router.post('/login', cors(corsOptions), (req, res, next) => {
         email,
         itineraries
       };
+      console.log("USER OBJECT", user)
       res.status(200).json({
         success: true,
         message: 'Authentication successful!',
