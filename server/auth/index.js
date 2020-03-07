@@ -58,13 +58,14 @@ router.post('/login', cors(corsOptions), (req, res, next) => {
           },
         }
       );
-      const { id, email, firstName, lastName, city } = userOrNull;
+      const { id, email, firstName, lastName, city, itineraries } = userOrNull;
       const user = {
         id,
         firstName,
         lastName,
         city,
         email,
+        itineraries
       };
       res.status(200).json({
         success: true,
@@ -156,13 +157,14 @@ router.get('/me', cors(corsOptions), (req, res, next) => {
     next();
   }
   if (req.user) {
-    const { id, email, firstName, lastName, city } = req.user;
+    const { id, email, firstName, lastName, city, itineraries } = req.user;
     const user = {
       id,
       firstName,
       lastName,
       email,
       city,
+      itineraries
     };
 
     return res.send(user);

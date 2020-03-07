@@ -145,7 +145,7 @@ const processActivityInstances = (pendingActivities, startTime, endTime) => {
       closestActivity.startTime = moment(startTime, "HH:mm").add(closestActivityTime, "hour").format("HH:mm")
 
       closestActivity.endTime = moment(startTime, "HH:mm").add((closestActivityTime + 1), "hour").format("HH:mm")
-      console.log(closestActivity.endTime)
+
       startTime = closestActivity.endTime
 
       scheduledActivities.push(closestActivity)
