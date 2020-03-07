@@ -150,7 +150,7 @@ router.post('/', (req, res, next) => {
         actsToSend.push(firstTransit);
       })
       .then(() => {
-        return scheduledActivities.forEach(async (activity, idx) => {
+        scheduledActivities.forEach(async (activity, idx) => {
           const { locationLat, locationLong, endTime } = activity;
           // console.log('date: ', date);
           // console.log('date to use: ', dateToUse);
@@ -163,32 +163,65 @@ router.post('/', (req, res, next) => {
             const nextActivity = scheduledActivities[idx + 1];
             nextLat = nextActivity.locationLat;
             nextLng = nextActivity.locationLong;
-          } else {
-            nextLat = endLocationLat;
-            nextLng = endLocationLong;
+            const transitObj = (
+              await axios.get(
+                `https://developer.citymapper.com/api/1/traveltime/?startcoord=${locationLat}%2C${locationLong}&endcoord=${nextLat}%2C${nextLng}&time=${dateToSend}&time_type=arrival&key=${process.env.CITY_MAPPER_API}`
+              )
+            ).data;
+
+            console.log('transit object: ', transitObj);
+
+            // without time
+            // const transitObj = (
+            //   await axios.get(
+            //     `https://developer.citymapper.com/api/1/traveltime/?startcoord=${locationLat}%2C${locationLong}&endcoord=${nextLat}%2C${nextLng}&time_type=arrival&key=${cityMapperAPIKey}`
+            //   )
+            // ).data;
+            transitObj.types = 'transit';
+            actsToSend.push(activity);
+            actsToSend.push(transitObj);
           }
-          const transitObj = (
-            await axios.get(
-              `https://developer.citymapper.com/api/1/traveltime/?startcoord=${locationLat}%2C${locationLong}&endcoord=${nextLat}%2C${nextLng}&time=${dateToSend}&time_type=arrival&key=${process.env.CITY_MAPPER_API}`
-            )
-          ).data;
-
-          console.log('transit object: ', transitObj);
-
-          // without time
+          // else {
+          //   nextLat = endLocationLat;
+          //   nextLng = endLocationLong;
+          // }
           // const transitObj = (
           //   await axios.get(
-          //     `https://developer.citymapper.com/api/1/traveltime/?startcoord=${locationLat}%2C${locationLong}&endcoord=${nextLat}%2C${nextLng}&time_type=arrival&key=${cityMapperAPIKey}`
+          //     `https://developer.citymapper.com/api/1/traveltime/?startcoord=${locationLat}%2C${locationLong}&endcoord=${nextLat}%2C${nextLng}&time=${dateToSend}&time_type=arrival&key=${process.env.CITY_MAPPER_API}`
           //   )
           // ).data;
-          transitObj.types = 'transit';
-          actsToSend.push(activity);
-          actsToSend.push(transitObj);
+
+          // console.log('transit object: ', transitObj);
+
+          // // without time
+          // // const transitObj = (
+          // //   await axios.get(
+          // //     `https://developer.citymapper.com/api/1/traveltime/?startcoord=${locationLat}%2C${locationLong}&endcoord=${nextLat}%2C${nextLng}&time_type=arrival&key=${cityMapperAPIKey}`
+          // //   )
+          // // ).data;
+          // transitObj.types = 'transit';
+          // actsToSend.push(activity);
+          // actsToSend.push(transitObj);
         });
-      })
-      .then(() => {
-        console.log('acts to send: ', actsToSend);
-        res.status(200).send(actsToSend);
+        const activity = scheduledActivities[scheduledActivities.length - 1];
+        const { locationLat, locationLong, endTime } = activity;
+        const firstDate = new Date(`${dateToUse} ${endTime}`).toISOString();
+        const dateToSend = firstDate.split(':').join('%3');
+        const nextLat = endLocationLat;
+        const nextLng = endLocationLong;
+        axios
+          .get(
+            `https://developer.citymapper.com/api/1/traveltime/?startcoord=${locationLat}%2C${locationLong}&endcoord=${nextLat}%2C${nextLng}&time=${dateToSend}&time_type=arrival&key=${process.env.CITY_MAPPER_API}`
+          )
+          .then(res => {
+            const lastTransit = res.data;
+            lastTransit.types = 'transit';
+            actsToSend.push(lastTransit);
+          })
+          .then(() => {
+            console.log('acts to send: ', actsToSend);
+            res.status(200).send(actsToSend);
+          });
       })
       .catch(e => {
         console.log('error getting from city mapper');
