@@ -163,6 +163,7 @@ router.get('/me', cors(corsOptions), (req, res, next) => {
     next();
   }
   if (req.user) {
+    console.log(req.user)
     const { id, email, firstName, lastName, city, itineraries } = req.user;
     const user = {
       id,
