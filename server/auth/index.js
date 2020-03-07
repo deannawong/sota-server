@@ -1,6 +1,6 @@
 const router = require('express').Router();
 const moment = require('moment');
-const { User, Session } = require('../db/index');
+const { User, Session, Itinerary } = require('../db/index');
 const cors = require('cors');
 const jwt = require('jsonwebtoken');
 const { checkToken } = require('../middleware');
@@ -39,7 +39,6 @@ router.post('/login', cors(corsOptions), (req, res, next) => {
     }, include: [
       {
         model: Itinerary,
-        include: [{ model: ActivityInstance }]
       },
     ]
   })
