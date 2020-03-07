@@ -150,7 +150,7 @@ router.post('/', async (req, res, next) => {
         actsToSend.push(firstTransit);
       })
       .then(() => {
-        scheduledActivities.forEach(async (activity, idx) => {
+        return scheduledActivities.forEach(async (activity, idx) => {
           const { locationLat, locationLong, endTime } = activity;
           // console.log('date: ', date);
           // console.log('date to use: ', dateToUse);
@@ -187,6 +187,7 @@ router.post('/', async (req, res, next) => {
         });
       })
       .then(() => {
+        console.log('acts to send: ', actsToSend);
         res.status(200).send(actsToSend);
       })
       .catch(e => {
