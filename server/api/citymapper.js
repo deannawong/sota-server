@@ -39,11 +39,11 @@ router.post('/', (req, res, next) => {
     startLocationLong,
     endLocationLat,
     endLocationLong,
+    endTime,
   } = req.body;
+
   const dateToUse = date.split('T')[0];
-  const firstDate = new Date(
-    `${date.split('T')[0]} ${startTime}`
-  ).toISOString();
+  const firstDate = new Date(`${date.split('T')[0]} ${endTime}`).toISOString();
   const dateToSend = firstDate.split(':').join('%3');
   axios
     .get(
