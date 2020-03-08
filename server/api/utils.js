@@ -151,52 +151,15 @@ const processActivityInstances = (pendingActivities, startTime, endTime) => {
       scheduledActivities.push(closestActivity)
       remainingTime -= (closestActivityTime + 1)
     } else {
-      console.log([scheduledActivities, otherOptions])
+
       return [scheduledActivities, otherOptions]
     }
     otherOptions = assignDistanceTo([closestActivity.locationLat, closestActivity.locationLong], otherOptions.slice(1));
     otherOptions.sort(compareByDistanceToNext);
   }
-  console.log([scheduledActivities, otherOptions])
+
   return [scheduledActivities, otherOptions]
 };
 
 
 module.exports = { fetchTriposoData, processActivityInstances };
-
-
-// FOR TESTING
-
-const locations = [
-  {
-    name: "Balthazar",
-    locationLong: -73.9981644,
-    locationLat: 40.7226578,
-    distance: 2164
-  },
-  {
-    name: "The Meatball Shop",
-    distance: 2535,
-    locationLong: -73.9885082,
-    locationLat: 40.7216531
-  },
-  {
-    name: "Veselka",
-    locationLong: -73.9870274,
-    locationLat: 40.7289705,
-    distance: 3246
-  },
-  {
-    name: "Webster Hall",
-    locationLong: -73.9890903092319,
-    locationLat: 40.73176802050928,
-    distance: 3416
-  }, {
-    name: "The Bronx Zoo",
-    locationLong: -73.8770,
-    locationLat: 40.8506,
-    distance: 19670
-  }
-];
-processActivityInstances(locations, "09:00", "14:00")
-
