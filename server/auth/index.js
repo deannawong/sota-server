@@ -164,10 +164,11 @@ router.get('/me', cors(corsOptions), (req, res, next) => {
   }
 
   if (req.user) {
-    console.log("req.user", req.user)
-    console.log("TOKEN")
+    // console.log("req.user", req.user)
+    // console.log("TOKEN")
     User.findOne({ where: { token }, include: [{ model: Itinerary }] })
       .then(userOrNull => {
+        console.log("FOUND USER???", userOrNull ? userOrNull.dataValues : null)
         if (userOrNull) {
           const { id, email, firstName, lastName, city, itineraries } = userOrNull;
           const user = {
