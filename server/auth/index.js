@@ -63,6 +63,7 @@ router.post('/login', cors(corsOptions), (req, res, next) => {
         }
       );
       const { id, email, firstName, lastName, city, itineraries } = userOrNull;
+
       const user = {
         id,
         firstName,
@@ -71,6 +72,7 @@ router.post('/login', cors(corsOptions), (req, res, next) => {
         email,
         itineraries
       };
+
       res.status(200).json({
         success: true,
         message: 'Authentication successful!',
@@ -160,22 +162,29 @@ router.get('/me', cors(corsOptions), (req, res, next) => {
     res.sendStatus(401);
     next();
   }
+  token = token.split('Bearer ')[1]
   if (req.user) {
-    const { id, email, firstName, lastName, city, itineraries } = req.user;
-    const user = {
-      id,
-      firstName,
-      lastName,
-      email,
-      city,
-      itineraries
-    };
+    User.findOne({ where: { token }, include: [{ model: Itinerary }] })
+      .then(userOrNull => {
+        if (userOrNull) {
+          const { id, email, firstName, lastName, city, itineraries } = userOrNull;
 
-    return res.send(user);
+          const user = {
+            id,
+            firstName,
+            lastName,
+            email,
+            city,
+            itineraries
+          }
+          res.send(user);
+        }
+      })
+  } else {
+    res.sendStatus(401);
+    console.log('no user found');
+    next();
   }
-  res.sendStatus(401);
-  console.log('no user found');
-  next();
 });
 
 module.exports = router;
