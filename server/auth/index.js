@@ -165,6 +165,7 @@ router.get('/me', cors(corsOptions), (req, res, next) => {
 
   if (req.user) {
     console.log("req.user", req.user)
+    console.log("TOKEN")
     User.findOne({ where: { token }, include: [{ model: Itinerary }] })
       .then(userOrNull => {
         if (userOrNull) {
@@ -180,10 +181,11 @@ router.get('/me', cors(corsOptions), (req, res, next) => {
           return res.send(user);
         }
       })
+  } else {
+    res.sendStatus(401);
+    console.log('no user found');
+    next();
   }
-  res.sendStatus(401);
-  console.log('no user found');
-  next();
 });
 
 module.exports = router;
