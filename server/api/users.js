@@ -6,7 +6,7 @@ router.get('/', (req, res, next) => {
     include: [
       {
         model: Itinerary,
-        include: [{ model: ActivityInstance }]
+        include: [{ model: ActivityInstance }],
       },
     ],
   })
@@ -21,20 +21,24 @@ router.get('/', (req, res, next) => {
 });
 
 router.get('/:id', (req, res, next) => {
-  const { id } = req.params
+  const { id } = req.params;
   User.findOne({
-    where: { id }, include: [{
-      model: Itinerary,
-      include: [{ model: ActivityInstance }]
-    }]
+    where: { id },
+    include: [
+      {
+        model: Itinerary,
+        include: [{ model: ActivityInstance }],
+      },
+    ],
   })
     .then(userOrNull => {
       if (userOrNull) {
-        res.status(200).send(userOrNull)
+        res.status(200).send(userOrNull);
       }
-      res.status(404).send("User not found.")
-    }).catch(err => next(err));
-})
+      res.status(404).send('User not found.');
+    })
+    .catch(err => next(err));
+});
 
 router.post('/', (req, res, next) => {
   User.create(req.body)

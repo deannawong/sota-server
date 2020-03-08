@@ -92,74 +92,83 @@ const compareByDistanceToHome = (a, b) => {
 };
 const assignDistanceTo = (startCoords, arrOfLocations) => {
   arrOfLocations.forEach(location => {
-    const to = turf.point(startCoords)
-    const from = turf.point([location.locationLat, location.locationLong])
-    location.distanceToNext = turf.distance(to, from, { units: "meters" }
-    );
+    const to = turf.point(startCoords);
+    const from = turf.point([location.locationLat, location.locationLong]);
+    location.distanceToNext = turf.distance(to, from, { units: 'meters' });
   });
-  return arrOfLocations
+  return arrOfLocations;
 };
 const activityTime = (locationObj, remainingTime) => {
-  let travelTimeToNext = 0, travelTimeHome = 0
+  let travelTimeToNext = 0,
+    travelTimeHome = 0;
   const { distanceToNext, distance } = locationObj;
-
 
   if (distanceToNext) {
     if (distanceToNext > 1000) {
-      travelTimeToNext = distanceToNext / 25000
+      travelTimeToNext = distanceToNext / 25000;
     } else {
-      travelTimeToNext = distanceToNext / 4000
+      travelTimeToNext = distanceToNext / 4000;
     }
   } else {
     if (distance > 1000) {
       travelTimeToNext = distance / 25000;
-    } else { travelTimeToNext = distance / 4000 }
+    } else {
+      travelTimeToNext = distance / 4000;
+    }
   }
   if (distance > 1000) {
     travelTimeHome = distance / 25000;
-  } else { travelTimeHome = distance / 4000 }
-
-  if ((travelTimeHome + travelTimeToNext + 1 > remainingTime)) {
-    return null
   } else {
-    return travelTimeToNext
+    travelTimeHome = distance / 4000;
   }
 
-}
+  if (travelTimeHome + travelTimeToNext + 1 > remainingTime) {
+    return null;
+  } else {
+    return travelTimeToNext;
+  }
+};
 
 const processActivityInstances = (pendingActivities, startTime, endTime) => {
-
-  const startHr = moment(startTime, "HH:mm").get("hour")
-  const endHr = moment(endTime, "HH:mm").get("hour")
+  const startHr = moment(startTime, 'HH:mm').get('hour');
+  const endHr = moment(endTime, 'HH:mm').get('hour');
 
   let remainingTime = endHr - startHr;
   const scheduledActivities = [];
   let otherOptions = pendingActivities.sort(compareByDistanceToHome);
 
   while (remainingTime && otherOptions.length) {
-    let closestActivity = otherOptions[0]
+    let closestActivity = otherOptions[0];
     let closestActivityTime = activityTime(otherOptions[0], remainingTime);
 
     if (closestActivityTime) {
       closestActivity.scheduled = true;
-      closestActivity.startTime = moment(startTime, "HH:mm").add(closestActivityTime, "hour").format("HH:mm")
+      closestActivity.startTime = moment(startTime, 'HH:mm')
+        .add(closestActivityTime, 'hour')
+        .format('HH:mm');
 
-      closestActivity.endTime = moment(startTime, "HH:mm").add((closestActivityTime + 1), "hour").format("HH:mm")
+      closestActivity.endTime = moment(startTime, 'HH:mm')
+        .add(closestActivityTime + 1, 'hour')
+        .format('HH:mm');
 
-      startTime = closestActivity.endTime
 
-      scheduledActivities.push(closestActivity)
-      remainingTime -= (closestActivityTime + 1)
+      startTime = closestActivity.endTime;
+
+
+      scheduledActivities.push(closestActivity);
+      remainingTime -= closestActivityTime + 1;
     } else {
+      return [scheduledActivities, otherOptions];
 
-      return [scheduledActivities, otherOptions]
     }
-    otherOptions = assignDistanceTo([closestActivity.locationLat, closestActivity.locationLong], otherOptions.slice(1));
+    otherOptions = assignDistanceTo(
+      [closestActivity.locationLat, closestActivity.locationLong],
+      otherOptions.slice(1)
+    );
     otherOptions.sort(compareByDistanceToNext);
   }
 
-  return [scheduledActivities, otherOptions]
+  return [scheduledActivities, otherOptions];
 };
-
 
 module.exports = { fetchTriposoData, processActivityInstances };
