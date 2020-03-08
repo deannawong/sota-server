@@ -61,9 +61,10 @@ router.post('/', (req, res, next) => {
         firstTransit.types = 'transit';
         newActs.push(firstTransit);
       })
-      .then(() => {
+      .then(async () => {
         const actsToSend = scheduledActivities.reduce(
           async (acc, activity, idx) => {
+            acc.push(activity);
             const { locationLat, locationLong, endTime } = activity;
             const firstDate = new Date(`${dateToUse} ${endTime}`).toISOString();
             const dateToSend = firstDate.split(':').join('%3');
@@ -77,11 +78,21 @@ router.post('/', (req, res, next) => {
               nextLat = endLocationLat;
               nextLng = endLocationLong;
             }
-            const transitObj = (
-              await axios.get(
+            // const transitObj = (
+            //   await axios.get(
+            //     `https://developer.citymapper.com/api/1/traveltime/?startcoord=${locationLat}%2C${locationLong}&endcoord=${nextLat}%2C${nextLng}&time=${dateToSend}&time_type=arrival&key=${process.env.CITY_MAPPER_API}`
+            //   )
+            // ).data;
+
+            axios
+              .get(
                 `https://developer.citymapper.com/api/1/traveltime/?startcoord=${locationLat}%2C${locationLong}&endcoord=${nextLat}%2C${nextLng}&time=${dateToSend}&time_type=arrival&key=${process.env.CITY_MAPPER_API}`
               )
-            ).data;
+              .then(res => {
+                const transitObj = res.data;
+                transitObj.types = 'transit';
+                acc.push(transitObj);
+              });
 
             // console.log('transit object: ', transitObj);
 
@@ -91,9 +102,9 @@ router.post('/', (req, res, next) => {
             //     `https://developer.citymapper.com/api/1/traveltime/?startcoord=${locationLat}%2C${locationLong}&endcoord=${nextLat}%2C${nextLng}&time_type=arrival&key=${cityMapperAPIKey}`
             //   )
             // ).data;
-            transitObj.types = 'transit';
-            acc.push(activity);
-            acc.push(transitObj);
+            // transitObj.types = 'transit';
+            // acc.push(activity);
+            // acc.push(transitObj);
             return acc;
           },
           newActs
