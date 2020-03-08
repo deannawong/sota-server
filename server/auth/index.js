@@ -162,7 +162,7 @@ router.get('/me', cors(corsOptions), (req, res, next) => {
     res.sendStatus(401);
     next();
   }
-
+  token = token.split('Bearer ')[1]
   if (req.user) {
     User.findOne({ where: { token }, include: [{ model: Itinerary }] })
       .then(userOrNull => {
