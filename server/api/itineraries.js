@@ -2,7 +2,6 @@ const router = require('express').Router();
 const { Itinerary, ActivityInstance } = require('../db');
 const { fetchTriposoData, processActivityInstances } = require('./utils');
 
-
 router.get('/', (req, res, next) => {
   Itinerary.findAll()
     .then(allItineraries => {
@@ -13,6 +12,19 @@ router.get('/', (req, res, next) => {
       }
     })
     .catch(err => next(err));
+});
+
+router.get('/:id', (req, res, next) => {
+  Itinerary.findByPk(req.params.id)
+    .then(itineraryOrNull => {
+      if (!itineraryOrNull) return res.status(404).send('no itinerary found');
+      res.status(302).send(itineraryOrNull);
+    })
+    .catch(err => {
+      console.log('error finding specific itinerary');
+      console.error(err);
+      next(err);
+    });
 });
 
 router.post('/', (req, res, next) => {
@@ -57,56 +69,59 @@ router.post('/newActivities/:userId', (req, res, next) => {
   const [startLocationLat, startLocationLong] = startLocation.split(',');
   const [endLocationLat, endLocationLong] = endLocation.split(',');
 
-  return (
-    Itinerary.create({
-      name,
-      date,
-      startLocationLat,
-      startLocationLong,
-      endLocationLat,
-      endLocationLong,
-      startTime,
-      endTime,
-      userId,
+  return Itinerary.create({
+    name,
+    date,
+    startLocationLat,
+    startLocationLong,
+    endLocationLat,
+    endLocationLong,
+    startTime,
+    endTime,
+    userId,
+  })
+    .then(newItinerary => {
+      const urlObj = {
+        locationName,
+        budget,
+        startLocation,
+        tags,
+        itineraryId: newItinerary.id,
+      };
+      return fetchTriposoData(urlObj);
     })
-      .then(newItinerary => {
-        const urlObj = {
-          locationName,
-          budget,
-          startLocation,
-          tags,
-          itineraryId: newItinerary.id,
-        };
-        return fetchTriposoData(urlObj);
-      })
-      .then(triposoObjs => {
-        const [scheduledActivities, otherOptions] =
-          processActivityInstances(triposoObjs, startTime, endTime)
+    .then(triposoObjs => {
+      const [scheduledActivities, otherOptions] = processActivityInstances(
+        triposoObjs,
+        startTime,
+        endTime
+      );
 
-        return Promise.all([ActivityInstance.bulkCreate(scheduledActivities), ActivityInstance.bulkCreate(otherOptions)])
-      })
-      .then(newActivityInstances => {
-        const [scheduledActivities, otherOptions] = newActivityInstances;
+      return Promise.all([
+        ActivityInstance.bulkCreate(scheduledActivities),
+        ActivityInstance.bulkCreate(otherOptions),
+      ]);
+    })
+    .then(newActivityInstances => {
+      const [scheduledActivities, otherOptions] = newActivityInstances;
 
-        Itinerary.findOne({
-          where: {
-            id: scheduledActivities[0].itineraryId,
-          },
-        }).then(itineraryOrNull => {
-
-          res.status(200).json({
-            newItinerary: itineraryOrNull,
-            scheduledActivities,
-            otherOptions
-          });
-        })
-      })
-      .catch(err => {
-        console.log('Error with creating activity instances with triposo');
-        console.error(err);
-        next(err);
-      })
-  );
+      Itinerary.findOne({
+        where: {
+          id: scheduledActivities[0].itineraryId,
+        },
+      }).then(itineraryOrNull => {
+        res.status(200).json({
+          newItinerary: itineraryOrNull,
+          scheduledActivities,
+          otherOptions,
+        });
+      });
+    })
+    .catch(err => {
+      console.log('Error with creating activity instances with triposo');
+      console.error(err);
+      next(err);
+    });
 });
 
 module.exports = router;
