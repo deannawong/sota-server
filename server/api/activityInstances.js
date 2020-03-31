@@ -44,6 +44,20 @@ router.put("/:id", (req, res, next) => {
     });
 });
 
+router.put('/', async (req, res, next) => {
+  const scheduledActs = req.body;
+  scheduledActs.forEach(act => {
+    const { id } = act;
+    await ActivityInstance.findByPk(id)
+      .then(foundOrNull => {
+        if (!foundOrNull) continue;
+        foundOrNull.update({
+          scheduled: true,
+        })
+      })
+  })
+  return res.status(200).send(scheduledActs)
+})
 
 
 module.exports = router;
