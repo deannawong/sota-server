@@ -17,8 +17,9 @@ router.get('/', (req, res, next) => {
 router.get('/:id', (req, res, next) => {
   Itinerary.findByPk(req.params.id)
     .then(itineraryOrNull => {
+      console.log('itinerary or null: ', itineraryOrNull);
       if (!itineraryOrNull) return res.status(404).send('no itinerary found');
-      res.status(302).send(itineraryOrNull);
+      res.status(200).send(itineraryOrNull);
     })
     .catch(err => {
       console.log('error finding specific itinerary');
