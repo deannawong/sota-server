@@ -1,5 +1,5 @@
-const Sequelize = require("sequelize");
-const db = require("./database");
+const Sequelize = require('sequelize');
+const db = require('./database');
 
 const {
   STRING,
@@ -10,54 +10,60 @@ const {
   TIME,
   ENUM,
   DATE,
-  FLOAT, ARRAY, BOOLEAN
+  FLOAT,
+  ARRAY,
+  BOOLEAN,
+  INTEGER,
 } = Sequelize;
 
-const ActivityInstance = db.define("activityInstance", {
+const ActivityInstance = db.define('activityInstance', {
   id: {
     type: UUID,
     defaultValue: UUIDV4,
-    primaryKey: true
+    primaryKey: true,
   },
   name: {
     type: STRING,
-    allowNull: false
+    allowNull: false,
   },
   locationLong: {
     type: FLOAT,
-    allowNull: false
+    allowNull: false,
   },
   locationLat: {
     type: FLOAT,
-    allowNull: false
+    allowNull: false,
   },
   types: {
-    type: ARRAY(STRING)
+    type: ARRAY(STRING),
   },
   startTime: {
-    type: TIME
+    type: TIME,
   },
   endTime: {
-    type: TIME
+    type: TIME,
   },
   date: {
-    type: DATE
+    type: DATE,
   },
   images: {
-    type: ARRAY(STRING)
+    type: ARRAY(STRING),
   },
   distance: {
-    type: FLOAT // This is a distance value from the startCoords on the intinerary
+    type: FLOAT, // This is a distance value from the startCoords on the intinerary
   },
   duration: {
-    type: DECIMAL(10, 2) // I think the best way to calculate duration is in quarter hours
+    type: DECIMAL(10, 2), // I think the best way to calculate duration is in quarter hours
   },
   distanceToNext: {
-    type: FLOAT
+    type: FLOAT,
   },
   scheduled: {
     type: BOOLEAN,
-    defaultValue: false
+    defaultValue: false,
+  },
+  order: {
+    type: INTEGER,
   },
   // rating: {
   //   type: ENUM(1, 2, 3, 4, 5)
