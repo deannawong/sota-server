@@ -4,13 +4,9 @@ const User = require('./user');
 const ActivityInstance = require('./activityInstance');
 const Itinerary = require('./itinerary');
 const Session = require('./session');
-const Scheduled = require('./scheduled');
 
 ActivityInstance.belongsTo(Itinerary);
 Itinerary.hasMany(ActivityInstance);
-
-Scheduled.belongsTo(Itinerary);
-Itinerary.hasMany(Scheduled);
 
 Itinerary.belongsTo(User);
 User.hasMany(Itinerary);
@@ -36,5 +32,4 @@ module.exports = {
   Itinerary,
   ActivityInstance,
   Session,
-  Scheduled,
 };
