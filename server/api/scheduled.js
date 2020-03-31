@@ -36,6 +36,8 @@ router.post('/', (req, res, next) => {
   const actsToReturn = [];
   for (let i = 0; i < acts.length; i++) {
     const act = acts[i];
+    delete act.createdAt;
+    delete act.updatedAt;
     act.order = i + 1;
     Scheduled.create(act)
       .then(created => {
