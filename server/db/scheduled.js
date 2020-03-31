@@ -54,10 +54,10 @@ const Scheduled = db.define('scheduled', {
     type: BOOLEAN,
   },
   startTime: {
-    type: TIME, // maybe string
+    type: STRING, // maybe string
   },
   endTime: {
-    type: TIME, // maybe string
+    type: STRING, // maybe string
   },
   travel_time_minutes: {
     type: INTEGER,
