@@ -3,7 +3,6 @@ router.use('/users', require('./users'));
 router.use('/itineraries', require('./itineraries'));
 router.use('/activityInstances', require('./activityInstances'));
 router.use('/citymapper', require('./citymapper'));
-router.use('/scheduled', require('./scheduled'));
 
 router.use((req, res, next) => {
   const err = new Error('API route not found!');
