@@ -1,31 +1,31 @@
-const router = require("express").Router();
-const { ActivityInstance } = require("../db");
+const router = require('express').Router();
+const { ActivityInstance } = require('../db');
 
-router.get("/", (req, res, next) => {
+router.get('/', (req, res, next) => {
   ActivityInstance.findAll()
     .then(allActivityInstances => {
       if (allActivityInstances.length) {
         res.status(200).send(allActivityInstances);
       } else {
-        res.status(404).send("No activityInstances found!");
+        res.status(404).send('No activityInstances found!');
       }
     })
     .catch(err => {
-      console.error("Error getting all activity instances");
-      next(err)
-    });
-});
-
-router.post("/", (req, res, next) => {
-  ActivityInstance.create(req.body)
-    .then(newActivity => res.status(200).send(newActivity))
-    .catch(err => {
-      console.error("Unable to post new activity instance.");
+      console.error('Error getting all activity instances');
       next(err);
     });
 });
 
-router.put("/:id", (req, res, next) => {
+router.post('/', (req, res, next) => {
+  ActivityInstance.create(req.body)
+    .then(newActivity => res.status(200).send(newActivity))
+    .catch(err => {
+      console.error('Unable to post new activity instance.');
+      next(err);
+    });
+});
+
+router.put('/:id', (req, res, next) => {
   const { id } = req.params;
   ActivityInstance.findByPk(id)
     .then(foundOrNull => {
@@ -39,25 +39,24 @@ router.put("/:id", (req, res, next) => {
       res.status(201).send(updatedActivityInstance)
     )
     .catch(err => {
-      console.error("Could not update Activity Instance.");
+      console.error('Could not update Activity Instance.');
       next(err);
     });
 });
 
-router.put('/', async (req, res, next) => {
+router.put('/', (req, res, next) => {
   const scheduledActs = req.body;
-  scheduledActs.forEach(act => {
+  scheduledActs.forEach(async act => {
     const { id } = act;
-    await ActivityInstance.findByPk(id)
-      .then(foundOrNull => {
-        if (!foundOrNull) continue;
-        foundOrNull.update({
-          scheduled: true,
-        })
-      })
-  })
-  return res.status(200).send(scheduledActs)
-})
-
+    await ActivityInstance.findByPk(id).then(foundOrNull => {
+      if (!foundOrNull) continue;
+      foundOrNull.update({
+        scheduled: true,
+      });
+    });
+  });
+  console.log('scheduled acts after forEach: ', scheduledActs);
+  return res.status(200).send(scheduledActs);
+});
 
 module.exports = router;
