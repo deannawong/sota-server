@@ -22,25 +22,45 @@ const Scheduled = db.define('scheduled', {
     defaultValue: UUIDV4,
     primaryKey: true,
   },
+  name: {
+    type: STRING,
+  },
   order: {
     type: INTEGER,
     allowNull: false,
   },
-  location: {
-    type: STRING,
-  },
-  type: {
-    type: STRING,
-    allowNull: false,
-  },
-  duration: {
+  locationLong: {
     type: FLOAT,
   },
-  rating: {
-    type: STRING,
+  locationLat: {
+    type: FLOAT,
   },
-  url: {
-    type: STRING,
+  types: {
+    type: ARRAY(STRING) || STRING,
+  },
+  date: {
+    type: DATE,
+  },
+  images: {
+    type: ARRAY(STRING),
+  },
+  distance: {
+    type: FLOAT, // This is a distance value from the startCoords on the intinerary
+  },
+  distanceToNext: {
+    type: FLOAT,
+  },
+  scheduled: {
+    type: BOOLEAN,
+  },
+  startTime: {
+    type: TIME, // maybe string
+  },
+  endTime: {
+    type: TIME, // maybe string
+  },
+  travel_time_minutes: {
+    type: INTEGER,
   },
 });
 
