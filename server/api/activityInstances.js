@@ -48,12 +48,17 @@ router.put('/', (req, res, next) => {
   const scheduledActs = req.body;
   scheduledActs.forEach(async act => {
     const { id } = act;
-    await ActivityInstance.findByPk(id).then(foundOrNull => {
-      if (!foundOrNull) continue;
-      foundOrNull.update({
-        scheduled: true,
+    await ActivityInstance.findByPk(id)
+      .then(foundOrNull => {
+        if (!foundOrNull) return;
+        foundOrNull.update({
+          scheduled: true,
+        });
+      })
+      .catch(e => {
+        console.log('error updating act');
+        console.error(e);
       });
-    });
   });
   console.log('scheduled acts after forEach: ', scheduledActs);
   return res.status(200).send(scheduledActs);
