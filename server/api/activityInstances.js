@@ -64,4 +64,26 @@ router.put('/', (req, res, next) => {
   return res.status(200).send(scheduledActs);
 });
 
+router.get('/:itineraryId', (req, res, next) => {
+  const { itineraryId } = req.params;
+  ActivityInstance.findAll({
+    where: {
+      itineraryId,
+      scheduled: true,
+    },
+  })
+    .then(scheduledForItin => {
+      if (scheduledForItin.length) {
+        res.status(200).send(scheduledForItin);
+      } else {
+        res.status(404).send('no scheduled found for that itinerary');
+      }
+    })
+    .catch(err => {
+      console.log('error getting activities for itinerary');
+      console.error(err);
+      next(err);
+    });
+});
+
 module.exports = router;
