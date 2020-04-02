@@ -65,6 +65,9 @@ const ActivityInstance = db.define('activityInstance', {
   order: {
     type: INTEGER,
   },
+  travel_time_minutes: {
+    type: INTEGER,
+  },
   // rating: {
   //   type: ENUM(1, 2, 3, 4, 5)
   // }
