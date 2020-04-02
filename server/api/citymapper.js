@@ -53,6 +53,7 @@ router.post('/', (req, res, next) => {
     .then(response => {
       const transitObj = response.data;
       transitObj.types = ['transit'];
+      transitObj.scheduled = true;
       ActivityInstance.create(transitObj)
         .then(newTransitObj => {
           res.status(200).send(newTransitObj);
