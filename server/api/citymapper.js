@@ -51,7 +51,7 @@ router.post('/', (req, res, next) => {
     )
     .then(response => {
       const transitObj = response.data;
-      transitObj.types = 'transit';
+      transitObj.types = ['transit'];
       res.status(200).send(transitObj);
     })
     .catch(e => {
