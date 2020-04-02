@@ -24,15 +24,12 @@ const ActivityInstance = db.define('activityInstance', {
   },
   name: {
     type: STRING,
-    allowNull: false,
   },
   locationLong: {
     type: FLOAT,
-    allowNull: false,
   },
   locationLat: {
     type: FLOAT,
-    allowNull: false,
   },
   types: {
     type: ARRAY(STRING),
