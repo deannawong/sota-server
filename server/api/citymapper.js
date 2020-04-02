@@ -41,6 +41,7 @@ router.post('/', (req, res, next) => {
     endLocationLat,
     endLocationLong,
     endTime,
+    itineraryId,
   } = req.body;
 
   const dateToUse = date.split('T')[0];
@@ -54,6 +55,7 @@ router.post('/', (req, res, next) => {
       const transitObj = response.data;
       transitObj.types = ['transit'];
       transitObj.scheduled = true;
+      transitObj.itineraryId = itineraryId;
       ActivityInstance.create(transitObj)
         .then(newTransitObj => {
           res.status(200).send(newTransitObj);
