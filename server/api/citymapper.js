@@ -1,6 +1,7 @@
 const router = require('express').Router();
 const cors = require('cors');
 const axios = require('axios');
+const { ActivityInstance } = require('../db');
 
 const allowedOrigins = [
   'capacitor://localhost',
@@ -52,7 +53,14 @@ router.post('/', (req, res, next) => {
     .then(response => {
       const transitObj = response.data;
       transitObj.types = ['transit'];
-      res.status(200).send(transitObj);
+      ActivityInstance.create(transitObj)
+        .then(newTransitObj => {
+          res.status(200).send(newTransitObj);
+        })
+        .catch(err => {
+          console.log('error creating new transit object');
+          console.error(err);
+        });
     })
     .catch(e => {
       console.log('error with city mapper');
