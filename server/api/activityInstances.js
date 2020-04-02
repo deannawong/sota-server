@@ -48,7 +48,7 @@ router.put('/', (req, res, next) => {
   const scheduledActs = req.body;
   scheduledActs.forEach(async act => {
     const { id, order } = act;
-    await ActivityInstance.findByPk(id)
+    await ActivityInstance.findOrCreate({ where: id })
       .then(foundOrNull => {
         if (!foundOrNull) return;
         foundOrNull.update({
