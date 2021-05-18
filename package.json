@@ -3,6 +3,9 @@
   "version": "1.0.0",
   "description": "Server for SOTA app.",
   "main": "index.js",
+  "engines": {
+    "node": "13.13.0"
+  } 
   "scripts": {
     "start": "node ./server/index.js",
     "start-watch": "./node_modules/.bin/nodemon ./server/index.js"
